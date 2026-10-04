@@ -15,12 +15,14 @@ import { MemoryPanel } from './components/MemoryPanel';
 import { DeliverableCenter } from './components/DeliverableCenter';
 import { AuditLog } from './components/AuditLog';
 import { WhyDifferentModal } from './components/WhyDifferentModal';
+import { ReviewModal } from './components/ReviewModal';
 import { ShieldAlert } from 'lucide-react';
 
 export default function App() {
   const [state, setState] = useState<OrchestratorState>(orchestrator.getState());
   const [activeTab, setActiveTab] = useState<string>('command');
   const [isWhyDifferentOpen, setIsWhyDifferentOpen] = useState<boolean>(false);
+  const [isGlobalReviewOpen, setIsGlobalReviewOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = orchestrator.subscribe((newState) => {
@@ -39,7 +41,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen text-[#292824] flex flex-col font-sans selection:bg-[#7C72D8]/18 selection:text-[#7C72D8]">
+    <div className="min-h-screen text-[#201F1D] flex flex-col font-sans selection:bg-[#7C72D8]/18 selection:text-[#7C72D8]">
       {/* 1. Header (Strict Top Bar Contract with Glass Navbar) */}
       <TopBar
         activeTab={activeTab}
@@ -52,6 +54,7 @@ export default function App() {
         onSelectScenario={handleSelectScenario}
         onOpenWhyDifferent={() => setIsWhyDifferentOpen(true)}
         pendingApprovalsCount={state.pendingApproval ? 1 : 0}
+        onOpenReview={() => setIsGlobalReviewOpen(true)}
       />
 
       {/* Floating Global Approval Notification if user is browsing another tab */}
@@ -60,23 +63,23 @@ export default function App() {
           <div className="max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#D5A45C] shadow-[0_0_8px_rgba(213,164,92,0.45)] shrink-0" />
-              <span className="font-semibold text-[#292824]">
+              <span className="font-semibold text-[#201F1D]">
                 Human Attention Required · Task #{state.tasks.find((t) => t.id === state.pendingApproval?.taskId)?.order}:
               </span>
-              <span className="text-[#68645D] truncate max-w-md">{state.pendingApproval.approval.requestedAction}</span>
+              <span className="text-[#57524A] truncate max-w-md">{state.pendingApproval.approval.requestedAction}</span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => orchestrator.approvePendingAction()}
-                className="liquid-button primary text-xs py-1.5 px-3.5 shadow-2xs"
+                className="liquid-button primary text-xs py-1.5 px-3.5 shadow-2xs cursor-pointer font-semibold"
               >
                 Approve Action
               </button>
               <button
-                onClick={() => setActiveTab('command')}
-                className="liquid-button text-xs py-1.5 px-3 border-[#D5A45C]/40 bg-white"
+                onClick={() => setIsGlobalReviewOpen(true)}
+                className="liquid-button text-xs py-1.5 px-3 border-[#D5A45C]/40 bg-white cursor-pointer font-medium"
               >
-                Review Details
+                Review Proposal
               </button>
             </div>
           </div>
@@ -136,6 +139,7 @@ export default function App() {
             onEmergencyStop={() => orchestrator.emergencyStop()}
             onApprove={() => orchestrator.approvePendingAction()}
             onReject={() => orchestrator.rejectPendingAction()}
+            onRequestChanges={(feedback) => orchestrator.requestChangesOnPendingAction(feedback)}
             onSelectTask={(id) => {
               setActiveTab('tasks');
             }}
@@ -196,14 +200,14 @@ export default function App() {
       </main>
 
       {/* 3. Quiet Editorial Glass Footer */}
-      <footer className="mt-8 border-t border-white/60 bg-white/40 backdrop-blur-md py-4 px-4 lg:px-8 text-xs text-[#68645D]">
+      <footer className="mt-8 border-t border-white/60 bg-white/40 backdrop-blur-md py-4 px-4 lg:px-8 text-xs text-[#57524A]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-[#292824]">Aegis Agent Operating System</span>
+            <span className="font-semibold text-[#201F1D]">Aegis Agent Operating System</span>
             <span>·</span>
             <span>Autonomy with Accountability</span>
           </div>
-          <div className="flex items-center gap-4 text-[#68645D] font-mono text-[11px]">
+          <div className="flex items-center gap-4 text-[#57524A] font-mono text-[11px]">
             <span>Human Control: {state.controlScore}/100</span>
             <span>·</span>
             <span>Agent Reliability: {state.reliabilityScore}%</span>
@@ -222,6 +226,22 @@ export default function App() {
       <WhyDifferentModal
         isOpen={isWhyDifferentOpen}
         onClose={() => setIsWhyDifferentOpen(false)}
+      />
+
+      {/* 5. Global Interactive Review Modal */}
+      <ReviewModal
+        isOpen={isGlobalReviewOpen}
+        onClose={() => setIsGlobalReviewOpen(false)}
+        pendingApproval={state.pendingApproval}
+        tasks={state.tasks}
+        objective={state.objective}
+        onApprove={() => orchestrator.approvePendingAction()}
+        onReject={() => orchestrator.rejectPendingAction()}
+        onRequestChanges={(feedback) => orchestrator.requestChangesOnPendingAction(feedback)}
+        onNavigateToDeliverable={() => {
+          setIsGlobalReviewOpen(false);
+          setActiveTab('deliverable');
+        }}
       />
     </div>
   );

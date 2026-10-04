@@ -47,6 +47,7 @@ interface WorkflowGraphProps {
   onEmergencyStop?: () => void;
   onApprove?: () => void;
   onReject?: () => void;
+  onRequestChanges?: (feedback?: string) => void;
   onSelectTask?: (taskId: string) => void;
   onNavigateToDeliverable?: () => void;
 }
@@ -83,6 +84,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   onEmergencyStop = () => {},
   onApprove = () => {},
   onReject = () => {},
+  onRequestChanges,
   onSelectTask,
   onNavigateToDeliverable,
 }) => {
@@ -263,6 +265,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
           onEmergencyStop={onEmergencyStop}
           onApprove={onApprove}
           onReject={onReject}
+          onRequestChanges={onRequestChanges}
           onSelectTask={onSelectTask}
           onNavigateToDeliverable={onNavigateToDeliverable}
         />

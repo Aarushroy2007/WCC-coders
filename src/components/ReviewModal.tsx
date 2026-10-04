@@ -105,7 +105,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#292824]/40 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-[#201F1D]/40 backdrop-blur-md transition-opacity"
         onClick={onClose}
       />
 
@@ -125,10 +125,10 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                 </span>
                 <span className="text-xs text-[#8C6D2D] font-mono">Stage 6 of 7 · Review Gate</span>
               </div>
-              <h2 className="text-base sm:text-lg font-bold text-[#292824] mt-1 tracking-tight">
+              <h2 className="text-base sm:text-lg font-bold text-[#201F1D] mt-1 tracking-tight">
                 Review & Authorize Strategy Proposal
               </h2>
-              <p className="text-xs text-[#68645D] mt-0.5">
+              <p className="text-xs text-[#57524A] mt-0.5">
                 The AI multi-agent system has paused to let you inspect, steer, or authorize recommendations.
               </p>
             </div>
@@ -136,7 +136,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-[#918C83] hover:text-[#292824] hover:bg-stone-100 transition-colors"
+            className="p-1.5 rounded-xl text-[#7D786F] hover:text-[#201F1D] hover:bg-stone-100 transition-colors"
             title="Close review dialog"
           >
             <X className="w-5 h-5" />
@@ -149,8 +149,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             onClick={() => setActiveTab('proposal')}
             className={`pb-2.5 px-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'proposal'
-                ? 'border-[#7C72D8] text-[#292824] font-semibold'
-                : 'border-transparent text-[#68645D] hover:text-[#292824]'
+                ? 'border-[#7C72D8] text-[#201F1D] font-semibold'
+                : 'border-transparent text-[#57524A] hover:text-[#201F1D]'
             }`}
           >
             1. Proposed Strategy
@@ -159,8 +159,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             onClick={() => setActiveTab('comparison')}
             className={`pb-2.5 px-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'comparison'
-                ? 'border-[#7C72D8] text-[#292824] font-semibold'
-                : 'border-transparent text-[#68645D] hover:text-[#292824]'
+                ? 'border-[#7C72D8] text-[#201F1D] font-semibold'
+                : 'border-transparent text-[#57524A] hover:text-[#201F1D]'
             }`}
           >
             2. Vendor Evaluation Matrix
@@ -169,8 +169,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             onClick={() => setActiveTab('verification')}
             className={`pb-2.5 px-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'verification'
-                ? 'border-[#7C72D8] text-[#292824] font-semibold'
-                : 'border-transparent text-[#68645D] hover:text-[#292824]'
+                ? 'border-[#7C72D8] text-[#201F1D] font-semibold'
+                : 'border-transparent text-[#57524A] hover:text-[#201F1D]'
             }`}
           >
             3. Quality & Verification (94%)
@@ -179,8 +179,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             onClick={() => setActiveTab('guidance')}
             className={`pb-2.5 px-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'guidance'
-                ? 'border-[#7C72D8] text-[#292824] font-semibold'
-                : 'border-transparent text-[#68645D] hover:text-[#292824]'
+                ? 'border-[#7C72D8] text-[#201F1D] font-semibold'
+                : 'border-transparent text-[#57524A] hover:text-[#201F1D]'
             }`}
           >
             4. Modify / Add Guidance
@@ -188,7 +188,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-[#292824]">
+        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-[#201F1D]">
           
           {/* TAB 1: Proposed Strategy */}
           {activeTab === 'proposal' && (
@@ -203,16 +203,16 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                     Risk: {riskLevel.toUpperCase()}
                   </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-semibold text-[#292824] leading-snug">
+                <h3 className="text-sm sm:text-base font-semibold text-[#201F1D] leading-snug">
                   {requestedAction}
                 </h3>
-                <div className="pt-2 border-t border-[#D5A45C]/25 text-xs text-[#68645D] space-y-1">
+                <div className="pt-2 border-t border-[#D5A45C]/25 text-xs text-[#57524A] space-y-1">
                   <div>
-                    <span className="font-semibold text-[#292824]">Why this action: </span>
+                    <span className="font-semibold text-[#201F1D]">Why this action: </span>
                     {reason}
                   </div>
                   <div>
-                    <span className="font-semibold text-[#292824]">Impact: </span>
+                    <span className="font-semibold text-[#201F1D]">Impact: </span>
                     {consequences}
                   </div>
                 </div>
@@ -220,17 +220,17 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
               {/* Strategic Recommendation Breakdown */}
               <div className="space-y-3">
-                <h4 className="text-xs font-semibold text-[#918C83] uppercase tracking-wider font-mono">
+                <h4 className="text-xs font-semibold text-[#7D786F] uppercase tracking-wider font-mono">
                   Synthesized Recommendation Preview
                 </h4>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-xl bg-white border border-stone-200/80 shadow-2xs space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[#292824]">Enterprise Pilot: Synthesia</span>
+                      <span className="font-semibold text-[#201F1D]">Enterprise Pilot: Synthesia</span>
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E8F3EC] text-[#4E8B65] font-semibold">Rank #1</span>
                     </div>
-                    <p className="text-xs text-[#68645D] leading-relaxed">
+                    <p className="text-xs text-[#57524A] leading-relaxed">
                       Deploy for institutional-scale training and multi-lingual compliance videos. SOC2 Type II verified with 140+ language avatars.
                     </p>
                     <div className="pt-1 text-[11px] font-mono text-[#7C72D8]">
@@ -240,10 +240,10 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
                   <div className="p-3.5 rounded-xl bg-white border border-stone-200/80 shadow-2xs space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[#292824]">Agile Pilot: HeyGen / Colossyan</span>
+                      <span className="font-semibold text-[#201F1D]">Agile Pilot: HeyGen / Colossyan</span>
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#F0EEFC] text-[#7C72D8] font-semibold">Rank #2</span>
                     </div>
-                    <p className="text-xs text-[#68645D] leading-relaxed">
+                    <p className="text-xs text-[#57524A] leading-relaxed">
                       Empower instructional designers with fast interactive branching scenarios and rapid slide-to-video conversion.
                     </p>
                     <div className="pt-1 text-[11px] font-mono text-[#7C72D8]">
@@ -257,11 +257,11 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
               <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200/70 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-[#7C72D8]" />
-                  <span className="text-[#68645D]">
-                    Prepared by <strong className="text-[#292824]">Supervisor & Analyst Agents</strong> · Audited by <strong className="text-[#292824]">Governance Sentinel</strong>
+                  <span className="text-[#57524A]">
+                    Prepared by <strong className="text-[#201F1D]">Supervisor & Analyst Agents</strong> · Audited by <strong className="text-[#201F1D]">Governance Sentinel</strong>
                   </span>
                 </div>
-                <span className="text-[11px] font-mono text-[#918C83]">Checkpoint #01</span>
+                <span className="text-[11px] font-mono text-[#7D786F]">Checkpoint #01</span>
               </div>
             </div>
           )}
@@ -270,15 +270,15 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
           {activeTab === 'comparison' && (
             <div className="space-y-4 animate-in fade-in duration-150">
               <div className="flex items-center justify-between text-xs">
-                <h4 className="font-semibold text-[#292824]">
+                <h4 className="font-semibold text-[#201F1D]">
                   Comparative Multi-Criteria Benchmark (Candidate Tools)
                 </h4>
-                <span className="text-[#918C83] font-mono">18 Pedagogical Vectors Normalized</span>
+                <span className="text-[#7D786F] font-mono">18 Pedagogical Vectors Normalized</span>
               </div>
 
               <div className="overflow-x-auto rounded-xl border border-stone-200/80 bg-white">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-stone-50 text-[11px] font-semibold text-[#68645D] border-b border-stone-200">
+                  <thead className="bg-stone-50 text-[11px] font-semibold text-[#57524A] border-b border-stone-200">
                     <tr>
                       <th className="py-2.5 px-3">Platform</th>
                       <th className="py-2.5 px-2">Overall Score</th>
@@ -288,7 +288,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                       <th className="py-2.5 px-3">Best Suited For</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-stone-100 text-[#292824]">
+                  <tbody className="divide-y divide-stone-100 text-[#201F1D]">
                     <tr className="bg-[#FAF7F2]/40">
                       <td className="py-2.5 px-3 font-semibold flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-[#4E8B65]" />
@@ -298,7 +298,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                       <td className="py-2.5 px-2">9.5 / 10</td>
                       <td className="py-2.5 px-2 text-[#4E8B65]">Full SCORM</td>
                       <td className="py-2.5 px-2 text-[#4E8B65]">SOC2 Type II</td>
-                      <td className="py-2.5 px-3 text-[#68645D]">Global enterprise education</td>
+                      <td className="py-2.5 px-3 text-[#57524A]">Global enterprise education</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-semibold flex items-center gap-1.5">
@@ -309,7 +309,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                       <td className="py-2.5 px-2">9.2 / 10</td>
                       <td className="py-2.5 px-2">Web Video / API</td>
                       <td className="py-2.5 px-2">SOC2 Type II</td>
-                      <td className="py-2.5 px-3 text-[#68645D]">Rapid creative course modules</td>
+                      <td className="py-2.5 px-3 text-[#57524A]">Rapid creative course modules</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-semibold flex items-center gap-1.5">
@@ -320,18 +320,18 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                       <td className="py-2.5 px-2">8.8 / 10</td>
                       <td className="py-2.5 px-2 text-[#4E8B65]">Interactive Branching</td>
                       <td className="py-2.5 px-2">GDPR / FERPA</td>
-                      <td className="py-2.5 px-3 text-[#68645D]">Scenario-based decision drills</td>
+                      <td className="py-2.5 px-3 text-[#57524A]">Scenario-based decision drills</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-semibold flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-stone-400" />
                         Elai.io
                       </td>
-                      <td className="py-2.5 px-2 font-mono font-medium text-[#68645D]">81/100</td>
+                      <td className="py-2.5 px-2 font-mono font-medium text-[#57524A]">81/100</td>
                       <td className="py-2.5 px-2">8.1 / 10</td>
                       <td className="py-2.5 px-2">LMS Export</td>
                       <td className="py-2.5 px-2">Standard Cloud</td>
-                      <td className="py-2.5 px-3 text-[#68645D]">Blog & article conversions</td>
+                      <td className="py-2.5 px-3 text-[#57524A]">Blog & article conversions</td>
                     </tr>
                   </tbody>
                 </table>
@@ -348,7 +348,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                     94%
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-[#292824]">
+                    <h4 className="text-sm font-semibold text-[#201F1D]">
                       Autonomous Quality Audit Passed
                     </h4>
                     <p className="text-xs text-[#5A876B]">
@@ -363,24 +363,24 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                 <div className="p-3 rounded-xl bg-white border border-stone-200/80">
-                  <span className="text-[11px] text-[#918C83] block">Factual Accuracy</span>
-                  <span className="text-lg font-bold font-mono text-[#292824]">96%</span>
+                  <span className="text-[11px] text-[#7D786F] block">Factual Accuracy</span>
+                  <span className="text-lg font-bold font-mono text-[#201F1D]">96%</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white border border-stone-200/80">
-                  <span className="text-[11px] text-[#918C83] block">Completeness</span>
-                  <span className="text-lg font-bold font-mono text-[#292824]">94%</span>
+                  <span className="text-[11px] text-[#7D786F] block">Completeness</span>
+                  <span className="text-lg font-bold font-mono text-[#201F1D]">94%</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white border border-stone-200/80">
-                  <span className="text-[11px] text-[#918C83] block">Safety & Privacy</span>
+                  <span className="text-[11px] text-[#7D786F] block">Safety & Privacy</span>
                   <span className="text-lg font-bold font-mono text-[#4E8B65]">100%</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white border border-stone-200/80">
-                  <span className="text-[11px] text-[#918C83] block">Internal Consistency</span>
-                  <span className="text-lg font-bold font-mono text-[#292824]">95%</span>
+                  <span className="text-[11px] text-[#7D786F] block">Internal Consistency</span>
+                  <span className="text-lg font-bold font-mono text-[#201F1D]">95%</span>
                 </div>
               </div>
 
-              <p className="text-xs text-[#68645D] italic p-3 rounded-xl bg-stone-50 border border-stone-200/60">
+              <p className="text-xs text-[#57524A] italic p-3 rounded-xl bg-stone-50 border border-stone-200/60">
                 "Audit confirms: Candidate vendor pricing and compliance claims cross-referenced with vendor security disclosures (2025-2026). No conflicting statements found."
               </p>
             </div>
@@ -390,10 +390,10 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
           {activeTab === 'guidance' && (
             <div className="space-y-4 animate-in fade-in duration-150">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#292824] block">
+                <label className="text-xs font-semibold text-[#201F1D] block">
                   Steer the AI: Provide Custom Guidance or Constraints
                 </label>
-                <p className="text-xs text-[#68645D]">
+                <p className="text-xs text-[#57524A]">
                   Want the AI to recalculate with specific parameters? Type your feedback below and the supervisor will integrate it before final synthesis.
                 </p>
                 <textarea
@@ -407,7 +407,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
               {/* Quick suggestions */}
               <div className="space-y-1.5">
-                <span className="text-[11px] font-semibold text-[#918C83] uppercase tracking-wider font-mono">
+                <span className="text-[11px] font-semibold text-[#7D786F] uppercase tracking-wider font-mono">
                   Quick Directives:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -415,7 +415,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                     <button
                       key={idx}
                       onClick={() => setFeedbackText(qp)}
-                      className="px-2.5 py-1 rounded-lg text-xs bg-white border border-stone-200 text-[#68645D] hover:bg-stone-50 hover:text-[#292824] transition-colors cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg text-xs bg-white border border-stone-200 text-[#57524A] hover:bg-stone-50 hover:text-[#201F1D] transition-colors cursor-pointer"
                     >
                       + {qp}
                     </button>
@@ -444,7 +444,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
         {/* Modal Footer Controls */}
         <div className="px-6 py-4 bg-white border-t border-stone-200/70 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs text-[#68645D]">
+          <div className="flex items-center gap-2 text-xs text-[#57524A]">
             <span className="w-2 h-2 rounded-full bg-[#D5A45C] animate-pulse" />
             <span>Workflow is paused awaiting your sign-off</span>
           </div>
@@ -452,7 +452,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
           <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
             <button
               onClick={onClose}
-              className="px-3.5 py-2 text-xs font-medium rounded-xl border border-stone-200 text-[#68645D] hover:bg-stone-50 hover:text-[#292824] transition-all"
+              className="px-3.5 py-2 text-xs font-medium rounded-xl border border-stone-200 text-[#57524A] hover:bg-stone-50 hover:text-[#201F1D] transition-all"
             >
               Review Later
             </button>
@@ -478,8 +478,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             <div className="w-14 h-14 rounded-full bg-[#E8F3EC] text-[#4E8B65] flex items-center justify-center mb-3">
               <Check className="w-8 h-8" />
             </div>
-            <h3 className="text-base font-bold text-[#292824]">Proposal Approved!</h3>
-            <p className="text-xs text-[#68645D] mt-1 max-w-sm">
+            <h3 className="text-base font-bold text-[#201F1D]">Proposal Approved!</h3>
+            <p className="text-xs text-[#57524A] mt-1 max-w-sm">
               Your sign-off has been registered in the immutable audit log. Resuming autonomous execution to compile the final deliverable...
             </p>
           </div>
@@ -491,8 +491,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             <div className="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-3">
               <X className="w-8 h-8" />
             </div>
-            <h3 className="text-base font-bold text-[#292824]">Proposal Rejected</h3>
-            <p className="text-xs text-[#68645D] mt-1 max-w-sm">
+            <h3 className="text-base font-bold text-[#201F1D]">Proposal Rejected</h3>
+            <p className="text-xs text-[#57524A] mt-1 max-w-sm">
               Workflow paused by operator decision. The supervisor has preserved current findings in memory.
             </p>
           </div>

@@ -140,6 +140,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
   const [inlineFeedbackSent, setInlineFeedbackSent] = useState(false);
 
   // Group tasks into the 7 conceptual stages
+  const goalTasks = useMemo(() => tasks.filter(t => t.order === 1 || (t.assignedAgent === 'supervisor' && t.order === 1)), [tasks]);
   const planTasks = useMemo(() => tasks.filter(t => t.assignedAgent === 'planner' || t.id.includes('plan')), [tasks]);
   const researchTasks = useMemo(() => tasks.filter(t => t.assignedAgent === 'researcher' || t.assignedAgent === 'analyst' || t.id.includes('research') || t.id.includes('benchmark')), [tasks]);
   const executeTasks = useMemo(() => tasks.filter(t => t.assignedAgent === 'executor' || t.id.includes('exec') || t.id.includes('synth')), [tasks]);
@@ -148,33 +149,49 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
   // Compute stage statuses and details
   const stages: StageDefinition[] = useMemo(() => {
     const isCompletedPhase = phase === 'completed';
+    const isIdle = phase === 'idle';
 
     // 1. GOAL
-    const goalStatus: StageDefinition['status'] = 'completed';
+    let goalStatus: StageDefinition['status'] = 'waiting';
+    let goalProgress = 0;
+    const goalTaskDone = goalTasks.length > 0 && goalTasks.every(t => t.status === 'completed' || t.status === 'recovered');
+    const goalTaskRunning = goalTasks.some(t => t.status === 'in_progress');
+    const hasAnyProgressBeyondGoal = tasks.some(t => t.order > 1 && (t.status === 'completed' || t.status === 'recovered' || t.status === 'in_progress'));
+
+    if (isCompletedPhase || goalTaskDone || hasAnyProgressBeyondGoal) {
+      goalStatus = 'completed';
+      goalProgress = 100;
+    } else if (phase === 'thinking' || goalTaskRunning || (activeAgent === 'supervisor' && !isIdle)) {
+      goalStatus = 'in_progress';
+      goalProgress = 50;
+    } else {
+      goalStatus = 'waiting';
+      goalProgress = 0;
+    }
 
     // 2. PLAN
     let planStatus: StageDefinition['status'] = 'waiting';
     let planProgress = 0;
-    if (tasks.length > 0) {
-      const anyPlanRunning = planTasks.some(t => t.status === 'in_progress');
-      const allPlanDone = planTasks.every(t => t.status === 'completed');
-      if (allPlanDone || tasks.length > 0) {
-        planStatus = 'completed';
-        planProgress = 100;
-      } else if (anyPlanRunning || phase === 'planning') {
-        planStatus = 'in_progress';
-        planProgress = 65;
-      }
-    } else if (phase === 'planning' || phase === 'thinking') {
+    const planTasksDone = planTasks.length > 0 && planTasks.every(t => t.status === 'completed' || t.status === 'recovered');
+    const planTasksRunning = planTasks.some(t => t.status === 'in_progress');
+    const hasAnyProgressBeyondPlan = tasks.some(t => t.order > 2 && (t.status === 'completed' || t.status === 'recovered' || t.status === 'in_progress'));
+
+    if (isCompletedPhase || planTasksDone || hasAnyProgressBeyondPlan) {
+      planStatus = 'completed';
+      planProgress = 100;
+    } else if (phase === 'planning' || planTasksRunning || (activeAgent === 'planner' && !isIdle)) {
       planStatus = 'in_progress';
-      planProgress = 50;
+      planProgress = 65;
+    } else {
+      planStatus = 'waiting';
+      planProgress = 0;
     }
 
     // 3. RESEARCH
     let researchStatus: StageDefinition['status'] = 'waiting';
     let researchProgress = 0;
     if (researchTasks.length > 0) {
-      const completedCount = researchTasks.filter(t => t.status === 'completed').length;
+      const completedCount = researchTasks.filter(t => t.status === 'completed' || t.status === 'recovered').length;
       researchProgress = Math.round((completedCount / researchTasks.length) * 100);
       const isRunning = researchTasks.some(t => t.status === 'in_progress') || activeAgent === 'researcher' || activeAgent === 'analyst';
       const hasError = researchTasks.some(t => t.status === 'failed') || (activeRecovery && activeRecovery.taskId.includes('benchmark'));
@@ -184,7 +201,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
       } else if (completedCount === researchTasks.length) {
         researchStatus = 'completed';
         researchProgress = 100;
-      } else if (isRunning || completedCount > 0) {
+      } else if (isRunning || (completedCount > 0 && !isIdle)) {
         researchStatus = 'in_progress';
       }
     }
@@ -193,7 +210,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
     let executeStatus: StageDefinition['status'] = 'waiting';
     let executeProgress = 0;
     if (executeTasks.length > 0) {
-      const completedCount = executeTasks.filter(t => t.status === 'completed').length;
+      const completedCount = executeTasks.filter(t => t.status === 'completed' || t.status === 'recovered').length;
       executeProgress = Math.round((completedCount / executeTasks.length) * 100);
       const isRunning = executeTasks.some(t => t.status === 'in_progress') || activeAgent === 'executor';
       if (completedCount === executeTasks.length) {
@@ -208,7 +225,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
     let verifyStatus: StageDefinition['status'] = 'waiting';
     let verifyProgress = 0;
     if (verifyTasks.length > 0) {
-      const completedCount = verifyTasks.filter(t => t.status === 'completed').length;
+      const completedCount = verifyTasks.filter(t => t.status === 'completed' || t.status === 'recovered').length;
       verifyProgress = Math.round((completedCount / verifyTasks.length) * 100);
       const isRunning = verifyTasks.some(t => t.status === 'in_progress') || phase === 'verifying' || activeAgent === 'verifier';
       if (completedCount === verifyTasks.length) {
@@ -225,7 +242,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
     if (pendingApproval) {
       reviewStatus = 'needs_approval';
       reviewProgress = 50;
-    } else if (isCompletedPhase || (verifyStatus === 'completed' && !pendingApproval)) {
+    } else if (isCompletedPhase || (verifyStatus === 'completed' && !pendingApproval && !isIdle)) {
       reviewStatus = 'completed';
       reviewProgress = 100;
     }
@@ -246,18 +263,20 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
         humanName: 'Your Goal',
         storyDescription: 'What you asked the AI to do',
         status: goalStatus,
-        statusText: 'Understood',
+        statusText: goalStatus === 'completed' ? 'Understood' : (goalStatus === 'in_progress' ? 'Analyzing...' : 'Ready'),
         icon: <Target className="w-5 h-5 text-[#7C72D8]" />,
-        progress: 100,
-        currentWork: objective,
+        progress: goalProgress,
+        currentWork: goalStatus === 'completed'
+          ? objective
+          : (goalStatus === 'in_progress' ? 'Supervisor agent is deconstructing your goal into parameters...' : 'Ready to begin. Click "Run Autonomous Workflow" to start.'),
         whyItMatters: 'Establishes clear boundaries, target deliverables, and quality criteria for all actions.',
         groupedAgents: [
           { name: 'Supervisor Agent', role: 'Intake & Orchestrator', roleDesc: 'Translates natural language into goal parameters' },
         ],
         toolsUsed: ['Intent Parser', 'Objective Alignment'],
-        resultSummary: 'Goal framed with explicit success criteria and governance boundaries.',
-        duration: 'Instant',
-        containedTasks: [],
+        resultSummary: goalStatus === 'completed' ? 'Goal framed with explicit success criteria and governance boundaries.' : 'Awaiting workflow execution.',
+        duration: goalStatus === 'completed' ? '0.9s' : '0.0s',
+        containedTasks: goalTasks,
       },
       {
         id: 'plan',
@@ -269,15 +288,17 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
         statusText: planStatus === 'completed' ? 'Plan Ready' : (planStatus === 'in_progress' ? 'Planning...' : 'Waiting'),
         icon: <Compass className="w-5 h-5 text-[#8D82C7]" />,
         progress: planProgress,
-        currentWork: `Structured the objective into ${tasks.length || 4} sequential and parallel checkpoints.`,
+        currentWork: planStatus === 'completed'
+          ? `Structured the objective into ${tasks.length || 4} sequential and parallel checkpoints.`
+          : (planStatus === 'in_progress' ? 'Planning agent is assembling dependencies and risk models...' : 'Pending intake and goal decomposition.'),
         whyItMatters: 'Prevents erratic exploration by defining task dependencies, tool assignments, and safety gates upfront.',
         groupedAgents: [
           { name: 'Planner Agent', role: 'Architecture', roleDesc: 'Decomposes complex requests into atomic sub-tasks' },
           { name: 'Supervisor Agent', role: 'Reviewer', roleDesc: 'Validates safety bounds and ensures human review points' },
         ],
         toolsUsed: ['Task Dependency Graph', 'Risk Evaluator'],
-        resultSummary: `${tasks.length} coordinated tasks scheduled with assigned agents and safety rubrics.`,
-        duration: '1.2s',
+        resultSummary: planStatus === 'completed' ? `${tasks.length} coordinated tasks scheduled with assigned agents and safety rubrics.` : 'Pending planning execution.',
+        duration: planStatus === 'completed' ? '1.2s' : 'Pending',
         containedTasks: planTasks,
       },
       {
@@ -412,7 +433,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
     const inProgress = stages.find(s => s.status === 'in_progress');
     if (inProgress) return inProgress;
     if (phase === 'completed') return stages[6];
-    return stages[1] || stages[0];
+    return stages[0];
   }, [stages, pendingApproval, activeRecovery, phase]);
 
   // Overall completed stages count
@@ -433,8 +454,8 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
   // Human-friendly activity items for recent highlights
   const recentHighlights = useMemo(() => {
     const highlights = [
-      { text: 'Task understood & goal initialized', done: true, time: '0:01' },
-      { text: `Action plan established (${tasks.length || 4} steps)`, done: tasks.length > 0, time: '0:03' },
+      { text: 'Task understood & goal initialized', done: stages[0].status === 'completed', time: '0:01' },
+      { text: `Action plan established (${tasks.length || 4} steps)`, done: stages[1].status === 'completed', time: '0:03' },
       { text: 'Market research & data analysis completed', done: stages[2].status === 'completed', time: '0:22' },
       { text: 'Executive recommendation formulated', done: stages[3].status === 'completed', time: '0:35' },
       { text: 'Quality & factual verification verified (94%)', done: stages[4].status === 'completed', time: '0:41' },
@@ -460,7 +481,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
         <div>
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#7C72D8] animate-pulse" />
-            <h2 className="text-base sm:text-lg font-semibold text-[#292824] tracking-tight">
+            <h2 className="text-base sm:text-lg font-semibold text-[#201F1D] tracking-tight">
               Agent Workflow
             </h2>
             
@@ -476,7 +497,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                 Completed
               </span>
             ) : phase === 'paused' ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-[#68645D] border border-stone-200">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-[#57524A] border border-stone-200">
                 <Pause className="w-3 h-3" />
                 Paused
               </span>
@@ -487,7 +508,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs text-[#68645D]">
+          <p className="mt-1 text-xs text-[#57524A]">
             Visual representation of how your agent is planning, executing, and verifying the task.
           </p>
         </div>
@@ -500,8 +521,8 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
               onClick={() => setViewMode('simple')}
               className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
                 viewMode === 'simple'
-                  ? 'bg-white text-[#292824] shadow-xs font-semibold'
-                  : 'text-[#68645D] hover:text-[#292824]'
+                  ? 'bg-white text-[#201F1D] shadow-xs font-semibold'
+                  : 'text-[#57524A] hover:text-[#201F1D]'
               }`}
               title="Clean horizontal stepper view for everyday users"
             >
@@ -511,8 +532,8 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
               onClick={() => setViewMode('detailed')}
               className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
                 viewMode === 'detailed'
-                  ? 'bg-white text-[#292824] shadow-xs font-semibold'
-                  : 'text-[#68645D] hover:text-[#292824]'
+                  ? 'bg-white text-[#201F1D] shadow-xs font-semibold'
+                  : 'text-[#57524A] hover:text-[#201F1D]'
               }`}
               title="Technical inspection view showing individual tools and telemetry"
             >
@@ -525,10 +546,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
             {phase === 'executing' || phase === 'planning' || phase === 'verifying' ? (
               <button
                 onClick={onPauseWorkflow}
-                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-xl bg-white/80 border border-white/90 text-[#292824] hover:bg-white shadow-2xs transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-xl bg-white/80 border border-white/90 text-[#201F1D] hover:bg-white shadow-2xs transition-all"
                 title="Pause execution"
               >
-                <Pause className="w-3.5 h-3.5 text-[#68645D]" />
+                <Pause className="w-3.5 h-3.5 text-[#57524A]" />
                 Pause
               </button>
             ) : phase === 'paused' ? (
@@ -553,7 +574,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
 
             <button
               onClick={onEmergencyStop}
-              className="p-1.5 text-xs text-[#918C83] hover:text-[#D98282] hover:bg-rose-50/50 rounded-xl transition-all"
+              className="p-1.5 text-xs text-[#7D786F] hover:text-[#D98282] hover:bg-rose-50/50 rounded-xl transition-all"
               title="Emergency Stop"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -561,7 +582,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
 
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-1.5 text-xs text-[#918C83] hover:text-[#292824] hover:bg-white/80 rounded-xl transition-all"
+              className="p-1.5 text-xs text-[#7D786F] hover:text-[#201F1D] hover:bg-white/80 rounded-xl transition-all"
               title={isFullscreen ? 'Exit Fullscreen' : 'Expand View'}
             >
               {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -576,10 +597,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
       <div className="mt-5 p-4 rounded-2xl bg-white/60 border border-white/70 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex-1">
           <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="font-semibold text-[#292824] flex items-center gap-1.5">
+            <span className="font-semibold text-[#201F1D] flex items-center gap-1.5">
               <span>Task Progress</span>
-              <span className="text-[#918C83] font-normal">·</span>
-              <span className="text-[#68645D]">{completedStagesCount} of {stages.length} stages completed</span>
+              <span className="text-[#7D786F] font-normal">·</span>
+              <span className="text-[#57524A]">{completedStagesCount} of {stages.length} stages completed</span>
             </span>
             <span className="font-mono font-medium text-[#7C72D8]">{overallProgressPercentage}%</span>
           </div>
@@ -591,15 +612,15 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-[#68645D] shrink-0 border-t sm:border-t-0 sm:border-l border-stone-200/60 pt-2 sm:pt-0 sm:pl-4">
+        <div className="flex items-center gap-4 text-xs text-[#57524A] shrink-0 border-t sm:border-t-0 sm:border-l border-stone-200/60 pt-2 sm:pt-0 sm:pl-4">
           <div className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#918C83]" />
-            <span>Time: <span className="font-mono text-[#292824]">{formatTime(executionTimeSeconds)}</span></span>
+            <Clock className="w-3.5 h-3.5 text-[#7D786F]" />
+            <span>Time: <span className="font-mono text-[#201F1D]">{formatTime(executionTimeSeconds)}</span></span>
           </div>
           {activeAgent && (
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#7C72D8] animate-ping" />
-              <span>Active: <span className="font-semibold text-[#292824] capitalize">{activeAgent}</span></span>
+              <span>Active: <span className="font-semibold text-[#201F1D] capitalize">{activeAgent}</span></span>
             </div>
           )}
         </div>
@@ -620,11 +641,11 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                 </span>
                 <span className="text-xs text-[#8C6D2D] font-mono">Governance Checkpoint #01</span>
               </div>
-              <h3 className="text-sm sm:text-base font-semibold text-[#292824]">
+              <h3 className="text-sm sm:text-base font-semibold text-[#201F1D]">
                 The AI is ready to proceed with: {pendingApproval.approval.requestedAction}
               </h3>
-              <p className="text-xs text-[#68645D] max-w-3xl leading-relaxed">
-                <span className="font-semibold text-[#292824]">Why: </span>{pendingApproval.approval.reason}
+              <p className="text-xs text-[#57524A] max-w-3xl leading-relaxed">
+                <span className="font-semibold text-[#201F1D]">Why: </span>{pendingApproval.approval.reason}
                 {pendingApproval.approval.consequences && (
                   <span className="block mt-0.5 text-[#8C6D2D]">
                     <span className="font-semibold">Impact: </span>{pendingApproval.approval.consequences}
@@ -682,7 +703,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                   <span className="text-xs text-[#8C6D2D]">·</span>
                   <span className="text-xs font-medium text-[#8C6D2D]">Stage 6 of 7 (Review)</span>
                 </div>
-                <h3 className="text-sm sm:text-base font-semibold text-[#292824] mt-0.5">
+                <h3 className="text-sm sm:text-base font-semibold text-[#201F1D] mt-0.5">
                   AI is waiting for your review and authorization before publishing recommendations
                 </h3>
               </div>
@@ -712,14 +733,14 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] font-mono uppercase tracking-wider text-[#7C72D8] font-semibold">
-                    Currently Working On
+                    {phase === 'idle' ? 'Ready to Start' : 'Currently Working On'}
                   </span>
-                  <span className="text-xs text-[#918C83]">·</span>
-                  <span className="text-xs font-medium text-[#68645D]">
+                  <span className="text-xs text-[#7D786F]">·</span>
+                  <span className="text-xs font-medium text-[#57524A]">
                     Stage {currentActiveStage.stepNumber} of 7 ({currentActiveStage.title})
                   </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-semibold text-[#292824] mt-0.5">
+                <h3 className="text-sm sm:text-base font-semibold text-[#201F1D] mt-0.5">
                   {currentActiveStage.currentWork}
                 </h3>
               </div>
@@ -727,10 +748,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
 
             <div className="flex items-center gap-3 sm:text-right shrink-0">
               <div className="space-y-1">
-                <span className="text-xs text-[#918C83] block">Next step</span>
-                <span className="text-xs font-medium text-[#68645D] flex items-center gap-1">
+                <span className="text-xs text-[#7D786F] block">Next step</span>
+                <span className="text-xs font-medium text-[#57524A] flex items-center gap-1">
                   <span>{stages[Math.min(currentActiveStage.stepNumber, stages.length - 1)].title}</span>
-                  <ArrowRight className="w-3 h-3 text-[#918C83]" />
+                  <ArrowRight className="w-3 h-3 text-[#7D786F]" />
                 </span>
               </div>
               <button
@@ -752,10 +773,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
               <Check className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-semibold text-[#292824]">
+              <h3 className="text-sm sm:text-base font-semibold text-[#201F1D]">
                 Workflow Complete! Executive Deliverable is Ready
               </h3>
-              <p className="text-xs text-[#68645D]">
+              <p className="text-xs text-[#57524A]">
                 All 7 stages verified and finalized. You can view, copy, or download the comprehensive report.
               </p>
             </div>
@@ -781,10 +802,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
       {viewMode === 'simple' && (
         <div className="mt-7">
           <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-xs font-mono text-[#918C83] uppercase tracking-wider">
+            <span className="text-xs font-mono text-[#7D786F] uppercase tracking-wider">
               Workflow Stages (Click any stage to view details)
             </span>
-            <span className="text-xs text-[#918C83]">
+            <span className="text-xs text-[#7D786F]">
               {selectedStageId ? '1 stage selected' : 'Showing overview'}
             </span>
           </div>
@@ -812,7 +833,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                 in_progress: 'bg-[#F0EEFC] text-[#7C72D8]',
                 recovering: 'bg-[#FDF0F0] text-[#C85A5A]',
                 needs_approval: 'bg-[#FEF8EC] text-[#C48A2C] font-semibold',
-                waiting: 'bg-stone-100 text-[#918C83]',
+                waiting: 'bg-stone-100 text-[#7D786F]',
               }[stage.status];
 
               return (
@@ -834,7 +855,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                     {/* Top Row: Step Number & Status Badge */}
                     <div className="flex items-center justify-between gap-1.5 mb-2.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="w-5 h-5 rounded-full bg-stone-100 border border-stone-200/80 text-[10px] font-mono text-[#68645D] flex items-center justify-center font-semibold">
+                        <span className="w-5 h-5 rounded-full bg-stone-100 border border-stone-200/80 text-[10px] font-mono text-[#57524A] flex items-center justify-center font-semibold">
                           {stage.stepNumber}
                         </span>
                         <div className="p-1 rounded-lg bg-white/70 shadow-2xs">
@@ -851,7 +872,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                     </div>
 
                     {/* Stage Title */}
-                    <h4 className="text-sm font-semibold text-[#292824] truncate group-hover:text-[#7C72D8] transition-colors flex items-center justify-between">
+                    <h4 className="text-sm font-semibold text-[#201F1D] truncate group-hover:text-[#7C72D8] transition-colors flex items-center justify-between">
                       <span>{stage.title}</span>
                       {stage.id === 'review' && stage.status === 'needs_approval' && (
                         <span className="text-[10px] font-bold text-[#D5A45C] bg-[#FEF8EC] px-1.5 py-0.5 rounded border border-[#D5A45C]/40">
@@ -861,12 +882,12 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                     </h4>
 
                     {/* One-Line Human Description */}
-                    <p className="mt-1 text-xs text-[#68645D] line-clamp-2 leading-relaxed">
+                    <p className="mt-1 text-xs text-[#57524A] line-clamp-2 leading-relaxed">
                       {stage.storyDescription}
                     </p>
 
                     {/* Contained Activity Hint (Grouped agents) */}
-                    <div className="mt-3 pt-2.5 border-t border-stone-100/80 flex items-center justify-between text-[11px] text-[#918C83]">
+                    <div className="mt-3 pt-2.5 border-t border-stone-100/80 flex items-center justify-between text-[11px] text-[#7D786F]">
                       <span>{stage.groupedAgents.length} {stage.groupedAgents.length === 1 ? 'agent' : 'agents'}</span>
                       <span className="text-[#7C72D8] font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                         {stage.id === 'review' ? 'Review & Details ↗' : (isSelected ? 'Collapse ▲' : 'Details ▼')}
@@ -917,10 +938,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                       <span className="text-xs font-mono uppercase tracking-wider text-[#7C72D8] font-semibold">
                         Stage {activeDetailStage.stepNumber} of 7
                       </span>
-                      <span className="text-xs text-[#918C83]">·</span>
-                      <span className="text-xs text-[#68645D] font-medium">{activeDetailStage.statusText}</span>
+                      <span className="text-xs text-[#7D786F]">·</span>
+                      <span className="text-xs text-[#57524A] font-medium">{activeDetailStage.statusText}</span>
                     </div>
-                    <h3 className="text-base font-semibold text-[#292824]">
+                    <h3 className="text-base font-semibold text-[#201F1D]">
                       {activeDetailStage.humanName}
                     </h3>
                   </div>
@@ -928,7 +949,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
 
                 <button
                   onClick={() => setSelectedStageId(null)}
-                  className="p-1.5 rounded-lg text-[#918C83] hover:text-[#292824] hover:bg-stone-100 transition-all"
+                  className="p-1.5 rounded-lg text-[#7D786F] hover:text-[#201F1D] hover:bg-stone-100 transition-all"
                   title="Close stage details"
                 >
                   <X className="w-4 h-4" />
@@ -941,29 +962,29 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                 {/* Column 1: What & Why (Storytelling) */}
                 <div className="space-y-3 md:col-span-2">
                   <div>
-                    <h5 className="text-xs font-semibold text-[#918C83] font-mono uppercase tracking-wider">
+                    <h5 className="text-xs font-semibold text-[#7D786F] font-mono uppercase tracking-wider">
                       What the AI is doing
                     </h5>
-                    <p className="mt-1 text-xs sm:text-sm text-[#292824] leading-relaxed">
+                    <p className="mt-1 text-xs sm:text-sm text-[#201F1D] leading-relaxed">
                       {activeDetailStage.currentWork}
                     </p>
                   </div>
 
                   <div>
-                    <h5 className="text-xs font-semibold text-[#918C83] font-mono uppercase tracking-wider">
+                    <h5 className="text-xs font-semibold text-[#7D786F] font-mono uppercase tracking-wider">
                       Why this matters
                     </h5>
-                    <p className="mt-1 text-xs text-[#68645D] leading-relaxed">
+                    <p className="mt-1 text-xs text-[#57524A] leading-relaxed">
                       {activeDetailStage.whyItMatters}
                     </p>
                   </div>
 
                   {activeDetailStage.resultSummary && (
                     <div className="p-3 rounded-xl bg-[#FAF7F2] border border-stone-200/60">
-                      <span className="text-xs font-semibold text-[#292824] block mb-0.5">
+                      <span className="text-xs font-semibold text-[#201F1D] block mb-0.5">
                         Outcome / Output produced:
                       </span>
-                      <p className="text-xs text-[#68645D]">
+                      <p className="text-xs text-[#57524A]">
                         {activeDetailStage.resultSummary}
                       </p>
                     </div>
@@ -984,28 +1005,28 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                 {/* Column 2: Agents & Tools Contained */}
                 <div className="space-y-4 p-4 rounded-xl bg-stone-50/70 border border-stone-200/60">
                   <div>
-                    <h5 className="text-xs font-semibold text-[#292824] flex items-center gap-1.5 mb-2">
+                    <h5 className="text-xs font-semibold text-[#201F1D] flex items-center gap-1.5 mb-2">
                       <Users className="w-3.5 h-3.5 text-[#7C72D8]" />
                       Responsible Agents ({activeDetailStage.groupedAgents.length})
                     </h5>
                     <div className="space-y-2">
                       {activeDetailStage.groupedAgents.map((ag, i) => (
                         <div key={i} className="text-xs">
-                          <span className="font-medium text-[#292824] block">{ag.name}</span>
-                          <span className="text-[11px] text-[#68645D]">{ag.roleDesc}</span>
+                          <span className="font-medium text-[#201F1D] block">{ag.name}</span>
+                          <span className="text-[11px] text-[#57524A]">{ag.roleDesc}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div className="pt-3 border-t border-stone-200/60">
-                    <h5 className="text-xs font-semibold text-[#292824] flex items-center gap-1.5 mb-2">
-                      <Wrench className="w-3.5 h-3.5 text-[#68645D]" />
+                    <h5 className="text-xs font-semibold text-[#201F1D] flex items-center gap-1.5 mb-2">
+                      <Wrench className="w-3.5 h-3.5 text-[#57524A]" />
                       Tools & Capabilities Used
                     </h5>
                     <div className="flex flex-wrap gap-1.5">
                       {activeDetailStage.toolsUsed.map((tool, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded-md bg-white border border-stone-200 text-[11px] text-[#68645D]">
+                        <span key={i} className="px-2 py-0.5 rounded-md bg-white border border-stone-200 text-[11px] text-[#57524A]">
                           {tool}
                         </span>
                       ))}
@@ -1013,9 +1034,9 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                   </div>
 
                   {activeDetailStage.duration && (
-                    <div className="pt-2 text-[11px] text-[#918C83]">
+                    <div className="pt-2 text-[11px] text-[#7D786F]">
                       <span>Execution duration: </span>
-                      <span className="font-mono text-[#292824] font-medium">{activeDetailStage.duration}</span>
+                      <span className="font-mono text-[#201F1D] font-medium">{activeDetailStage.duration}</span>
                     </div>
                   )}
                 </div>
@@ -1032,14 +1053,14 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                         </span>
                         <span className="text-xs text-[#8C6D2D] font-mono">Stage 6 Checkpoint</span>
                       </div>
-                      <h4 className="text-sm sm:text-base font-bold text-[#292824] mt-1">
+                      <h4 className="text-sm sm:text-base font-bold text-[#201F1D] mt-1">
                         {pendingApproval
                           ? `Decision Required: ${pendingApproval.approval.requestedAction}`
                           : activeDetailStage.status === 'completed'
                           ? 'Review Complete · Strategy Signed Off'
                           : 'Review Checkpoint on Standby'}
                       </h4>
-                      <p className="text-xs text-[#68645D] mt-0.5 max-w-2xl">
+                      <p className="text-xs text-[#57524A] mt-0.5 max-w-2xl">
                         {pendingApproval
                           ? 'You have ultimate authority over agent outputs. Authorize recommendations, provide directional guidance, or reject to re-plan.'
                           : activeDetailStage.status === 'completed'
@@ -1140,10 +1161,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
         <div className="mt-7 space-y-4">
           <div className="p-4 rounded-2xl bg-white/70 border border-white/80 shadow-2xs">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-xs font-mono uppercase tracking-wider text-[#918C83] font-semibold">
+              <h4 className="text-xs font-mono uppercase tracking-wider text-[#7D786F] font-semibold">
                 Technical Task Graph & Tool Invocations
               </h4>
-              <span className="text-xs text-[#68645D] font-mono">{tasks.length} atomic operations</span>
+              <span className="text-xs text-[#57524A] font-mono">{tasks.length} atomic operations</span>
             </div>
 
             <div className="divide-y divide-stone-100">
@@ -1159,21 +1180,21 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                     }`} />
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-[#292824]">{task.title}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-stone-100 text-[#68645D]">
+                        <span className="text-xs font-semibold text-[#201F1D]">{task.title}</span>
+                        <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-stone-100 text-[#57524A]">
                           {task.assignedAgent}
                         </span>
                       </div>
-                      <p className="text-xs text-[#68645D] mt-0.5 line-clamp-1">{task.description}</p>
+                      <p className="text-xs text-[#57524A] mt-0.5 line-clamp-1">{task.description}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0 text-xs">
-                    <span className="px-2 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-[11px] font-mono text-[#68645D]">
+                    <span className="px-2 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-[11px] font-mono text-[#57524A]">
                       {task.requiredTool}
                     </span>
                     <span className={`font-mono text-xs ${
-                      task.status === 'completed' ? 'text-[#4E8B65]' : (task.status === 'in_progress' ? 'text-[#7C72D8]' : 'text-[#918C83]')
+                      task.status === 'completed' ? 'text-[#4E8B65]' : (task.status === 'in_progress' ? 'text-[#7C72D8]' : 'text-[#7D786F]')
                     }`}>
                       {task.progress}%
                     </span>
@@ -1191,7 +1212,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
           ======================================================== */}
       <div className="mt-6 pt-5 border-t border-white/80">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-          <span className="text-xs font-mono uppercase tracking-wider text-[#918C83]">
+          <span className="text-xs font-mono uppercase tracking-wider text-[#7D786F]">
             Recent Milestones & Activity
           </span>
           <button
@@ -1210,17 +1231,17 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
               key={i}
               className={`p-2.5 rounded-xl border text-xs transition-all ${
                 hl.done
-                  ? 'bg-white/70 border-white/90 text-[#292824]'
-                  : 'bg-white/30 border-white/40 text-[#918C83]'
+                  ? 'bg-white/70 border-white/90 text-[#201F1D]'
+                  : 'bg-white/30 border-white/40 text-[#7D786F]'
               }`}
             >
               <div className="flex items-center justify-between gap-1 mb-1">
                 <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${
-                  hl.done ? 'bg-[#E8F3EC] text-[#4E8B65]' : 'bg-stone-100 text-[#918C83]'
+                  hl.done ? 'bg-[#E8F3EC] text-[#4E8B65]' : 'bg-stone-100 text-[#7D786F]'
                 }`}>
                   {hl.done ? '✓' : '○'}
                 </span>
-                <span className="text-[10px] font-mono text-[#918C83]">{hl.time}</span>
+                <span className="text-[10px] font-mono text-[#7D786F]">{hl.time}</span>
               </div>
               <p className="line-clamp-2 leading-tight text-[11px] font-medium">
                 {hl.text}
@@ -1234,17 +1255,17 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
           9. COMPLETE ACTIVITY LOG MODAL (Progressive Disclosure)
           ======================================================== */}
       {showFullActivityModal && (
-        <div className="fixed inset-0 z-50 bg-[#292824]/30 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 bg-[#201F1D]/30 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="w-full max-w-2xl max-h-[85vh] rounded-3xl bg-[#FAF7F2] border border-white shadow-xl flex flex-col overflow-hidden">
             {/* Modal Header */}
             <div className="p-5 border-b border-stone-200/80 flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold text-[#292824]">Immutable Activity & Governance Log</h3>
-                <p className="text-xs text-[#68645D]">Every thought, decision, tool invocation, and human sign-off</p>
+                <h3 className="text-base font-semibold text-[#201F1D]">Immutable Activity & Governance Log</h3>
+                <p className="text-xs text-[#57524A]">Every thought, decision, tool invocation, and human sign-off</p>
               </div>
               <button
                 onClick={() => setShowFullActivityModal(false)}
-                className="p-1.5 rounded-xl hover:bg-stone-200/60 text-[#68645D] transition-colors"
+                className="p-1.5 rounded-xl hover:bg-stone-200/60 text-[#57524A] transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1259,7 +1280,7 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
                   className={`px-3 py-1 rounded-lg capitalize transition-all ${
                     activityFilter === flt
                       ? 'bg-[#7C72D8] text-white font-medium shadow-2xs'
-                      : 'bg-white border border-stone-200 text-[#68645D] hover:bg-stone-50'
+                      : 'bg-white border border-stone-200 text-[#57524A] hover:bg-stone-50'
                   }`}
                 >
                   {flt}
@@ -1272,18 +1293,18 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
               {activityLog.length > 0 ? (
                 activityLog.map(item => (
                   <div key={item.id} className="pt-2 text-xs flex items-start gap-3">
-                    <span className="font-mono text-[10px] text-[#918C83] shrink-0 mt-0.5">
+                    <span className="font-mono text-[10px] text-[#7D786F] shrink-0 mt-0.5">
                       {item.timestamp.slice(11, 19)}
                     </span>
                     <div>
-                      <span className="font-semibold text-[#292824] mr-2">[{item.type.toUpperCase()}]</span>
-                      <span className="font-medium text-[#292824]">{item.title}</span>
-                      {item.detail && <span className="text-[#68645D] block mt-0.5">{item.detail}</span>}
+                      <span className="font-semibold text-[#201F1D] mr-2">[{item.type.toUpperCase()}]</span>
+                      <span className="font-medium text-[#201F1D]">{item.title}</span>
+                      {item.detail && <span className="text-[#57524A] block mt-0.5">{item.detail}</span>}
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="py-8 text-center text-xs text-[#918C83]">
+                <div className="py-8 text-center text-xs text-[#7D786F]">
                   No technical events logged yet.
                 </div>
               )}
@@ -1291,10 +1312,10 @@ export const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({
 
             {/* Modal Footer */}
             <div className="p-4 border-t border-stone-200/80 bg-white/60 flex items-center justify-between text-xs">
-              <span className="text-[#918C83]">Showing cryptographic audit trail</span>
+              <span className="text-[#7D786F]">Showing cryptographic audit trail</span>
               <button
                 onClick={() => setShowFullActivityModal(false)}
-                className="px-4 py-1.5 rounded-xl bg-stone-200/80 text-[#292824] hover:bg-stone-300 transition-colors font-medium"
+                className="px-4 py-1.5 rounded-xl bg-stone-200/80 text-[#201F1D] hover:bg-stone-300 transition-colors font-medium"
               >
                 Close
               </button>

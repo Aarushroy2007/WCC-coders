@@ -520,7 +520,7 @@ class OrchestratorService {
     this.notify();
   }
 
-  public requestChangesOnPendingAction(guidance: string): void {
+  public requestChangesOnPendingAction(guidance: string = 'Operator requested revisions to parameters and constraints.'): void {
     if (!this.state.pendingApproval) return;
     const { taskId } = this.state.pendingApproval;
     const task = this.state.tasks.find((t) => t.id === taskId);

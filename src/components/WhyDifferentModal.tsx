@@ -80,19 +80,19 @@ export const WhyDifferentModal: React.FC<WhyDifferentModalProps> = ({ isOpen, on
         {/* Header */}
         <div className="p-6 border-b border-white/60 flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <span className="glass-badge py-0.5 px-2.5 text-[10px] text-[#7C72D8] bg-[#7C72D8]/10 border-[#7C72D8]/20">
-              ARCHITECTURAL MANIFESTO
+            <span className="caption-meta text-[#7C72D8]">
+              Architectural Manifesto
             </span>
-            <h2 className="text-xl font-bold text-[#292824] mt-1">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#201F1D] mt-1 tracking-[-0.02em]">
               Why This Agent Is Different
             </h2>
-            <p className="text-xs text-[#68645D]">
+            <p className="text-xs sm:text-[13px] text-[#57524A] leading-relaxed max-w-[65ch]">
               "Don't just build an AI that talks. Build an AI that gets things done — responsibly."
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-[#918C83] hover:text-[#292824] hover:bg-white/80 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-[#7D786F] hover:text-[#201F1D] hover:bg-white/80 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -110,13 +110,13 @@ export const WhyDifferentModal: React.FC<WhyDifferentModalProps> = ({ isOpen, on
                   <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center border border-white shadow-2xs shrink-0">
                     {p.icon}
                   </div>
-                  <h3 className="font-semibold text-[#292824]">{p.title}</h3>
+                  <h3 className="font-semibold text-xs sm:text-[13px] text-[#201F1D] tracking-tight">{p.title}</h3>
                 </div>
-                <p className="text-[#292824] font-medium leading-relaxed">
+                <p className="text-[#201F1D] font-medium leading-relaxed text-xs sm:text-[13px]">
                   {p.summary}
                 </p>
-                <div className="pt-2 border-t border-white/70 text-[11px] text-[#68645D]">
-                  <span className="font-semibold text-[#292824]">Contrast: </span>
+                <div className="pt-2 border-t border-white/70 text-[11px] sm:text-xs text-[#57524A] leading-relaxed">
+                  <span className="font-semibold text-[#201F1D]">Contrast: </span>
                   {p.contrast}
                 </div>
               </div>
@@ -126,12 +126,12 @@ export const WhyDifferentModal: React.FC<WhyDifferentModalProps> = ({ isOpen, on
 
         {/* Footer */}
         <div className="p-4 bg-white/40 border-t border-white/60 flex items-center justify-between text-xs">
-          <span className="text-[#68645D] font-mono text-[11px]">
+          <span className="text-[#7D786F] font-mono text-[11px]">
             Aegis Agent Operating System · Certified Human Oversight
           </span>
           <button
             onClick={onClose}
-            className="liquid-button primary text-xs py-2 px-5"
+            className="liquid-button primary text-xs py-2 px-5 font-semibold cursor-pointer"
           >
             Close Inspector
           </button>

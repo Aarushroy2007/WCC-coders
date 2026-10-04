@@ -17,6 +17,7 @@ interface TopBarProps {
   onSelectScenario: (id: string) => void;
   onOpenWhyDifferent: () => void;
   pendingApprovalsCount: number;
+  onOpenReview?: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -30,6 +31,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   onSelectScenario,
   onOpenWhyDifferent,
   pendingApprovalsCount,
+  onOpenReview,
 }) => {
   const navItems = [
     { id: 'command', label: 'Command Center' },
@@ -52,26 +54,26 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="flex items-center justify-between gap-4">
         {/* Zone 1: Single text element wordmark */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#7C72D8] to-[#8E85E2] text-white flex items-center justify-center font-bold text-sm tracking-wider shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#7C72D8] to-[#8E85E2] text-white flex items-center justify-center font-semibold text-xs tracking-wider shadow-2xs">
             Æ
           </div>
-          <span className="text-lg font-bold tracking-tight text-[#292824]">
-            Aegis <span className="font-normal text-[#68645D] text-xs tracking-normal">Agent OS</span>
+          <span className="text-[16px] font-semibold tracking-[-0.02em] text-[#201F1D]">
+            Aegis <span className="font-normal text-[#57524A] text-xs tracking-normal ml-1">Agent OS</span>
           </span>
         </div>
 
         {/* Zone 2: Navigation Links (Clean text with hover/active indicators) */}
-        <nav className="hidden md:flex items-center gap-1 text-xs font-medium text-[#68645D] overflow-x-auto py-0.5">
+        <nav className="hidden md:flex items-center gap-1 text-[13px] font-medium text-[#57524A] overflow-x-auto py-0.5 tracking-[-0.005em]">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`relative px-3.5 py-1.5 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+                className={`relative px-3.5 py-1.5 rounded-xl transition-all whitespace-nowrap cursor-pointer text-[13px] ${
                   isActive
-                    ? 'text-[#292824] bg-white/90 font-semibold shadow-2xs border border-white'
-                    : 'hover:text-[#292824] hover:bg-white/40 text-[#68645D]'
+                    ? 'text-[#201F1D] bg-white/95 font-semibold shadow-2xs border border-white/90'
+                    : 'hover:text-[#201F1D] hover:bg-white/45 text-[#57524A] font-medium'
                 }`}
               >
                 {item.label}
@@ -88,7 +90,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           {/* Review Needed button if pending approval */}
           {pendingApprovalsCount > 0 && (
             <button
-              onClick={() => setActiveTab('command')}
+              onClick={() => (onOpenReview ? onOpenReview() : setActiveTab('command'))}
               className="liquid-button text-xs py-1.5 px-3 bg-[#FEF8EC] text-[#8C6D2D] border border-[#D5A45C]/50 hover:bg-[#FDF2D9] flex items-center gap-1.5 font-semibold animate-pulse shadow-2xs cursor-pointer"
               title="A high-priority governance approval requires your review"
             >
@@ -101,7 +103,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           <button
             onClick={onOpenWhyDifferent}
             title="Architecture & explainability"
-            className="hidden sm:inline-flex liquid-button text-xs py-1.5 px-3"
+            className="hidden sm:inline-flex liquid-button text-xs py-1.5 px-3 font-medium text-[#57524A] hover:text-[#201F1D]"
           >
             <HelpCircle className="w-3.5 h-3.5 text-[#7C72D8]" />
             <span>Why Different</span>
@@ -112,7 +114,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             <select
               aria-label="Preset Scenarios"
               onChange={(e) => onSelectScenario(e.target.value)}
-              className="text-xs py-1.5 px-3 bg-white/70 backdrop-blur-md border border-[#EBE4D8] rounded-xl text-[#292824] font-medium focus:outline-hidden focus:ring-2 focus:ring-[#7C72D8]/20 shadow-2xs cursor-pointer"
+              className="text-xs py-1.5 px-3 bg-white/70 backdrop-blur-md border border-[#EBE4D8] rounded-xl text-[#201F1D] font-medium focus:outline-hidden focus:ring-2 focus:ring-[#7C72D8]/20 shadow-2xs cursor-pointer"
               defaultValue="edtech_video_research"
             >
               <option value="edtech_video_research">Demo: EdTech AI Video Platform</option>
@@ -126,8 +128,8 @@ export const TopBar: React.FC<TopBarProps> = ({
             onClick={() => onToggleSimulation(!simulationMode)}
             className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border transition-all cursor-pointer ${
               simulationMode
-                ? 'bg-[#FAF2E2] border-[#D5A45C]/50 text-[#8C6D2D] shadow-2xs'
-                : 'bg-white/60 border-white/80 text-[#68645D] hover:text-[#292824] hover:bg-white/80'
+                ? 'bg-[#FAF2E2] border-[#D5A45C]/50 text-[#8C6D2D] shadow-2xs font-semibold'
+                : 'bg-white/60 border-white/80 text-[#57524A] hover:text-[#201F1D] hover:bg-white/80'
             }`}
             title="Dry-run workflow without committing changes"
           >
@@ -139,16 +141,16 @@ export const TopBar: React.FC<TopBarProps> = ({
           {isRunning || isWaitingApproval ? (
             <button
               onClick={onEmergencyStop}
-              className="liquid-button danger text-xs py-1.5 px-3.5 whitespace-nowrap cursor-pointer"
+              className="liquid-button danger text-xs py-1.5 px-3.5 whitespace-nowrap cursor-pointer font-medium"
               title="Immediately freeze all tasks and abort active tool calls"
             >
               <Square className="w-3 h-3 fill-[#8C3B3B] text-[#8C3B3B]" />
-              <span>STOP AGENT</span>
+              <span>Stop Agent</span>
             </button>
           ) : isStopped || isPaused ? (
             <button
               onClick={onResume}
-              className="liquid-button primary text-xs py-1.5 px-3.5 whitespace-nowrap"
+              className="liquid-button primary text-xs py-1.5 px-3.5 whitespace-nowrap font-medium"
             >
               <Play className="w-3 h-3 fill-white text-white" />
               <span>Resume</span>
@@ -156,7 +158,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           ) : (
             <div className="agent-status text-xs py-1 px-3">
               <span className="status-dot" />
-              <span className="font-mono text-[#68645D] text-[11px]">Governed</span>
+              <span className="font-mono text-[#57524A] text-[11px] font-medium">Governed</span>
             </div>
           )}
         </div>

@@ -132,18 +132,37 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Major Page Title (Requirement 5) */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pt-1">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-[-0.022em] text-[#201F1D] leading-tight">
+            AI Agent Workspace
+          </h1>
+          <p className="text-[14px] text-[#57524A] font-normal leading-normal max-w-[65ch]">
+            Monitor, steer, and understand your autonomous multi-agent system in real time.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-stone-200/80 font-mono text-[11px] font-medium text-[#57524A] shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-[#79A98A] animate-pulse" />
+            <span>Multi-Agent Engine Ready</span>
+          </span>
+        </div>
+      </div>
+
       {/* 1. Objective Glass Card */}
       <section className="glass-card">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
           <div className="space-y-2 flex-1">
-            <div className="flex items-center gap-2 text-xs text-[#68645D]">
-              <span className="glass-badge py-0.5 px-2.5 text-[11px] font-semibold text-[#7C72D8] bg-[#7C72D8]/10 border-[#7C72D8]/20">
-                Autonomous Objective
+            <div className="flex items-center gap-2 text-xs text-[#57524A]">
+              <span className="glass-badge py-0.5 px-2.5 text-[11px] font-semibold text-[#7C72D8] bg-[#7C72D8]/10 border-[#7C72D8]/20 tracking-[0.01em]">
+                Target Objective
               </span>
-              <span aria-hidden="true">·</span>
-              <span className="font-mono">{tasks.length} Structured Tasks</span>
-              <span aria-hidden="true">·</span>
-              <span className="font-mono text-[#68645D]">Multi-Agent Graph</span>
+              <span aria-hidden="true" className="text-stone-300">·</span>
+              <span className="font-mono text-[12px]">{tasks.length} Structured Tasks</span>
+              <span aria-hidden="true" className="text-stone-300">·</span>
+              <span className="font-mono text-[12px] text-[#57524A]">Multi-Agent Graph</span>
             </div>
 
             {isEditingGoal ? (
@@ -158,7 +177,7 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
                 <div className="flex items-center gap-2">
                   <button
                     type="submit"
-                    className="liquid-button primary text-xs py-1.5 px-4"
+                    className="liquid-button primary text-xs py-1.5 px-4 font-semibold"
                   >
                     Generate Agent Plan
                   </button>
@@ -176,12 +195,12 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
               </form>
             ) : (
               <div className="group flex items-start gap-2.5">
-                <h1 className="text-base sm:text-lg font-semibold text-[#292824] leading-snug">
+                <h2 className="text-base sm:text-lg font-semibold text-[#201F1D] leading-snug tracking-[-0.012em]">
                   {objective}
-                </h1>
+                </h2>
                 <button
                   onClick={() => setIsEditingGoal(true)}
-                  className="text-xs text-[#918C83] hover:text-[#7C72D8] underline decoration-[#EBE4D8] underline-offset-2 shrink-0 pt-1 cursor-pointer transition-colors"
+                  className="text-xs text-[#7D786F] hover:text-[#7C72D8] underline decoration-[#EBE4D8] underline-offset-2 shrink-0 pt-1 cursor-pointer transition-colors font-medium"
                 >
                   Edit
                 </button>
@@ -196,7 +215,7 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
                 onClick={onPauseWorkflow}
                 className="liquid-button text-xs py-2 px-4"
               >
-                <Pause className="w-3.5 h-3.5 text-[#292824]" />
+                <Pause className="w-3.5 h-3.5 text-[#201F1D]" />
                 <span>Pause</span>
               </button>
             ) : isCompleted ? (
@@ -213,7 +232,7 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
                   className="liquid-button text-xs py-2 px-3"
                   title="Re-run entire workflow"
                 >
-                  <RotateCcw className="w-3.5 h-3.5 text-[#68645D]" />
+                  <RotateCcw className="w-3.5 h-3.5 text-[#57524A]" />
                   <span>Re-run</span>
                 </button>
               </div>
@@ -232,7 +251,7 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
                   title="Step through one task at a time"
                 >
                   <span>Step</span>
-                  <ChevronRight className="w-3 h-3 text-[#68645D]" />
+                  <ChevronRight className="w-3 h-3 text-[#57524A]" />
                 </button>
               </div>
             )}
@@ -256,24 +275,24 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
                   key={item.key}
                   className={`flex items-center gap-2 p-2.5 rounded-2xl border text-xs transition-all ${
                     isCurrent
-                      ? 'bg-[#FAF4EC] border-[#D5A45C]/50 text-[#292824] font-semibold shadow-2xs ring-2 ring-[#D5A45C]/20'
+                      ? 'bg-[#FAF4EC] border-[#D5A45C]/50 text-[#201F1D] font-semibold shadow-2xs ring-2 ring-[#D5A45C]/20'
                       : isPast
-                      ? 'bg-white/70 border-[#EBE4D8] text-[#292824]'
-                      : 'bg-white/20 border-white/40 text-[#918C83]'
+                      ? 'bg-white/70 border-[#EBE4D8] text-[#201F1D] font-medium'
+                      : 'bg-white/20 border-white/40 text-[#7D786F]'
                   }`}
                 >
                   <span
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono shrink-0 transition-colors ${
                       isCurrent
-                        ? 'bg-[#7C72D8] text-white animate-pulse'
+                        ? 'bg-[#7C72D8] text-white animate-pulse font-semibold'
                         : isPast
-                        ? 'bg-[#68645D] text-white'
-                        : 'bg-stone-200/80 text-[#918C83]'
+                        ? 'bg-[#57524A] text-white font-semibold'
+                        : 'bg-stone-200/80 text-[#7D786F]'
                     }`}
                   >
                     {isPast && !isCurrent ? '✓' : idx + 1}
                   </span>
-                  <span className="truncate whitespace-nowrap">{item.label}</span>
+                  <span className="truncate whitespace-nowrap tracking-[-0.005em]">{item.label}</span>
                 </div>
               );
             })}
@@ -285,12 +304,12 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
       <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
         {/* Human Control Score */}
         <div className="glass-card p-4!">
-          <div className="text-[11px] text-[#68645D] font-medium">Human Control Score</div>
+          <div className="text-[12px] text-[#57524A] font-medium tracking-[-0.005em]">Human Control Score</div>
           <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tabular-nums text-[#292824]">{controlScore}</span>
-            <span className="text-xs text-[#918C83] font-mono">/100</span>
+            <span className="text-2xl sm:text-[26px] font-bold font-mono tabular-nums text-[#201F1D] tracking-[-0.02em]">{controlScore}</span>
+            <span className="text-xs text-[#7D786F] font-mono">/100</span>
           </div>
-          <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-[#5A876B] font-medium">
+          <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-[#4E8B65] font-medium">
             <span className="status-dot" style={{ width: '7px', height: '7px' }} />
             <span>High Oversight</span>
           </div>
@@ -298,9 +317,9 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
 
         {/* Agent Reliability */}
         <div className="glass-card p-4!">
-          <div className="text-[11px] text-[#68645D] font-medium">Agent Reliability</div>
+          <div className="text-[12px] text-[#57524A] font-medium tracking-[-0.005em]">Agent Reliability</div>
           <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tabular-nums text-[#292824]">{reliabilityScore}%</span>
+            <span className="text-2xl sm:text-[26px] font-bold font-mono tabular-nums text-[#201F1D] tracking-[-0.02em]">{reliabilityScore}%</span>
           </div>
           <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-[#7C72D8] font-medium">
             <span className="status-dot violet" style={{ width: '7px', height: '7px' }} />
@@ -310,26 +329,26 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
 
         {/* Execution Time */}
         <div className="glass-card p-4!">
-          <div className="text-[11px] text-[#68645D] font-medium">Execution Runtime</div>
+          <div className="text-[12px] text-[#57524A] font-medium tracking-[-0.005em]">Execution Runtime</div>
           <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tabular-nums text-[#292824]">
+            <span className="text-2xl sm:text-[26px] font-bold font-mono tabular-nums text-[#201F1D] tracking-[-0.02em]">
               {formatSeconds(executionTimeSeconds)}
             </span>
           </div>
-          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-[#68645D]">
-            <Clock className="w-3 h-3 text-[#918C83]" />
+          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-[#57524A]">
+            <Clock className="w-3 h-3 text-[#7D786F]" />
             <span>{phase === 'executing' ? 'Live Telemetry' : 'Total Latency'}</span>
           </div>
         </div>
 
         {/* Task Progress */}
         <div className="glass-card p-4!">
-          <div className="text-[11px] text-[#68645D] font-medium">Tasks Progress</div>
+          <div className="text-[12px] text-[#57524A] font-medium tracking-[-0.005em]">Tasks Progress</div>
           <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tabular-nums text-[#292824]">
+            <span className="text-2xl sm:text-[26px] font-bold font-mono tabular-nums text-[#201F1D] tracking-[-0.02em]">
               {completedTasksCount}
             </span>
-            <span className="text-xs text-[#918C83] font-mono">/ {totalTasksCount}</span>
+            <span className="text-xs text-[#7D786F] font-mono">/ {totalTasksCount}</span>
           </div>
           <div className="mt-2 w-full bg-stone-200/50 rounded-full h-1.5 overflow-hidden">
             <div
@@ -341,11 +360,11 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
 
         {/* Active Agent */}
         <div className="glass-card p-4!">
-          <div className="text-[11px] text-[#68645D] font-medium">Active Agent</div>
-          <div className="mt-1 truncate font-semibold text-xs text-[#292824]">
+          <div className="text-[12px] text-[#57524A] font-medium tracking-[-0.005em]">Active Agent</div>
+          <div className="mt-1 truncate font-semibold text-xs text-[#201F1D] tracking-[-0.005em]">
             {activeAgent ? `${activeAgent.toUpperCase()}` : 'SUPERVISOR'}
           </div>
-          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-[#68645D]">
+          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-[#57524A]">
             <Cpu className="w-3 h-3 text-[#7C72D8]" />
             <span>Specialized Node</span>
           </div>
@@ -353,12 +372,12 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
 
         {/* Active Tool */}
         <div className="glass-card p-4!">
-          <div className="text-[11px] text-[#68645D] font-medium">Active Tool</div>
-          <div className="mt-1 truncate font-semibold text-xs text-[#292824]">
+          <div className="text-[12px] text-[#57524A] font-medium tracking-[-0.005em]">Active Tool</div>
+          <div className="mt-1 truncate font-semibold text-xs text-[#201F1D] tracking-[-0.005em]">
             {activeTool ? activeTool.replace('_', ' ') : 'Standby'}
           </div>
-          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-[#68645D]">
-            <Layers className="w-3 h-3 text-[#918C83]" />
+          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-[#57524A]">
+            <Layers className="w-3 h-3 text-[#7D786F]" />
             <span>Sandboxed Call</span>
           </div>
         </div>
@@ -489,24 +508,24 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
           <div className="glass-card space-y-4">
             <div className="flex items-center justify-between border-b border-white/60 pb-3">
               <div>
-                <span className="text-xs text-[#918C83] font-mono">TASK EXECUTION SPOTLIGHT</span>
-                <h2 className="text-sm sm:text-base font-semibold text-[#292824] flex items-center gap-2 mt-0.5">
+                <span className="text-[11px] text-[#7D786F] font-mono tracking-[0.015em] uppercase font-semibold">Task Execution Spotlight</span>
+                <h2 className="text-base sm:text-lg font-semibold text-[#201F1D] tracking-[-0.012em] flex items-center gap-2 mt-0.5">
                   <span>#{currentTask?.order || 1}. {currentTask?.title}</span>
                 </h2>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold ${
                   currentTask?.status === 'completed'
                     ? 'bg-[#79A98A]/15 text-[#4E765D] border border-[#79A98A]/30'
                     : currentTask?.status === 'in_progress'
-                    ? 'bg-[#D5A45C]/15 text-[#8C6D2D] border border-[#D5A45C]/35'
-                    : 'bg-white/60 text-[#68645D]'
+                    ? 'bg-[#D5A45C]/15 text-[#8C6D2D] border border-[#D5A45C]/35 animate-pulse'
+                    : 'bg-white/70 text-[#57524A]'
                 }`}>
-                  {currentTask?.status?.replace('_', ' ').toUpperCase()}
+                  {currentTask?.status === 'in_progress' ? 'Working' : (currentTask?.status === 'completed' ? 'Completed' : (currentTask?.status === 'waiting_approval' ? 'Needs Review' : 'Pending'))}
                 </span>
                 <button
                   onClick={onNavigateToTasks}
-                  className="text-xs text-[#68645D] hover:text-[#292824] flex items-center gap-1 cursor-pointer transition-colors"
+                  className="text-xs text-[#57524A] hover:text-[#201F1D] font-medium flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <span>All Tasks</span>
                   <ArrowRight className="w-3 h-3" />
@@ -514,22 +533,22 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
               </div>
             </div>
 
-            <p className="text-xs text-[#68645D] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#57524A] leading-relaxed max-w-[65ch]">
               {currentTask?.description}
             </p>
 
             <div className="grid grid-cols-3 gap-2 py-2.5 border-y border-white/70 text-xs">
               <div>
-                <span className="text-[11px] text-[#918C83]">Assigned Agent</span>
-                <p className="font-medium text-[#292824] capitalize mt-0.5">{currentTask?.assignedAgent} Agent</p>
+                <span className="text-[11px] text-[#7D786F] font-medium">Assigned Agent</span>
+                <p className="font-semibold text-[#201F1D] capitalize mt-0.5">{currentTask?.assignedAgent} Agent</p>
               </div>
               <div>
-                <span className="text-[11px] text-[#918C83]">Required Tool</span>
-                <p className="font-medium text-[#292824] mt-0.5">{currentTask?.requiredTool.replace('_', ' ')}</p>
+                <span className="text-[11px] text-[#7D786F] font-medium">Required Tool</span>
+                <p className="font-semibold text-[#201F1D] mt-0.5">{currentTask?.requiredTool.replace('_', ' ')}</p>
               </div>
               <div>
-                <span className="text-[11px] text-[#918C83]">Risk & Priority</span>
-                <p className="font-medium text-[#292824] mt-0.5 capitalize">{currentTask?.riskLevel} / {currentTask?.priority}</p>
+                <span className="text-[11px] text-[#7D786F] font-medium">Risk & Priority</span>
+                <p className="font-semibold text-[#201F1D] mt-0.5 capitalize">{currentTask?.riskLevel} / {currentTask?.priority}</p>
               </div>
             </div>
 
@@ -537,8 +556,8 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
             {currentTask?.reasoningSummary && (
               <div className="bg-white/60 rounded-2xl p-4 border border-[#EBE4D8] space-y-2.5 backdrop-blur-md">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-[#68645D] tracking-wide">
-                    SUPERVISOR REASONING SUMMARY
+                  <span className="text-[11px] font-semibold text-[#57524A] tracking-[0.01em]">
+                    Supervisor Reasoning Summary
                   </span>
                   <button
                     onClick={() => setShowConfidenceDetail(!showConfidenceDetail)}
@@ -548,30 +567,30 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
                   </button>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-[#68645D]">
+                <div className="space-y-1.5 text-xs text-[#57524A] leading-relaxed">
                   <div>
-                    <span className="font-semibold text-[#292824]">Decision: </span>
-                    <span className="text-[#292824]">{currentTask.reasoningSummary.decision}</span>
+                    <span className="font-semibold text-[#201F1D]">Decision: </span>
+                    <span className="text-[#201F1D]">{currentTask.reasoningSummary.decision}</span>
                   </div>
                   <div>
-                    <span className="font-semibold text-[#292824]">Why: </span>
+                    <span className="font-semibold text-[#201F1D]">Why: </span>
                     <span>{currentTask.reasoningSummary.why}</span>
                   </div>
                   <div>
-                    <span className="font-semibold text-[#292824]">Evidence: </span>
-                    <span className="text-[#68645D]">{currentTask.reasoningSummary.evidence}</span>
+                    <span className="font-semibold text-[#201F1D]">Evidence: </span>
+                    <span className="text-[#57524A]">{currentTask.reasoningSummary.evidence}</span>
                   </div>
                   <div>
-                    <span className="font-semibold text-[#292824]">Next Action: </span>
-                    <span className="text-[#292824]">{currentTask.reasoningSummary.nextAction}</span>
+                    <span className="font-semibold text-[#201F1D]">Next Action: </span>
+                    <span className="text-[#201F1D]">{currentTask.reasoningSummary.nextAction}</span>
                   </div>
                 </div>
 
                 {/* Optional Expanded Confidence Factors */}
                 {showConfidenceDetail && (
                   <div className="pt-2 border-t border-[#EBE4D8] text-[11px] space-y-1">
-                    <span className="text-[#68645D] font-medium">Confidence Factors Grounded:</span>
-                    <ul className="list-disc list-inside text-[#68645D] space-y-0.5">
+                    <span className="text-[#57524A] font-medium">Confidence Factors Grounded:</span>
+                    <ul className="list-disc list-inside text-[#57524A] space-y-0.5">
                       {currentTask.reasoningSummary.factors.map((f, i) => (
                         <li key={i}>{f}</li>
                       ))}
@@ -587,10 +606,10 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
         <div className="glass-card flex flex-col h-[440px]">
           <div className="flex items-center justify-between border-b border-white/60 pb-3 mb-3">
             <div>
-              <span className="text-xs text-[#918C83] font-mono">LIVE EXECUTION TIMELINE</span>
-              <h3 className="text-sm font-semibold text-[#292824] mt-0.5">Activity Stream</h3>
+              <span className="text-[11px] text-[#7D786F] font-mono tracking-[0.015em] uppercase font-semibold">Live Execution Timeline</span>
+              <h3 className="text-base font-semibold text-[#201F1D] tracking-[-0.01em] mt-0.5">Activity Stream</h3>
             </div>
-            <span className="text-[11px] font-mono text-[#918C83]">
+            <span className="text-[11px] font-mono text-[#7D786F]">
               {activityLog.length} events
             </span>
           </div>
@@ -599,13 +618,13 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
             {activityLog.map((log) => (
               <div key={log.id} className="flex items-start gap-2.5 group">
                 <span
-                  className={`w-2 h-2 rounded-full mt-1.5 shrink-0 shadow-2xs ${
-                    log.type === 'error'
-                      ? 'bg-[#D98282]'
-                      : log.type === 'warning'
+                  className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                    log.type === 'goal'
+                      ? 'bg-[#7C72D8]'
+                      : log.type === 'tool'
                       ? 'bg-[#D5A45C]'
                       : log.type === 'approval'
-                      ? 'bg-[#D5A45C]'
+                      ? 'bg-[#E9A98F]'
                       : log.type === 'recovery'
                       ? 'bg-[#7F9DBB]'
                       : log.type === 'success'
@@ -615,11 +634,11 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
                 />
                 <div className="space-y-0.5 flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="font-semibold text-[#292824] truncate">{log.title}</span>
-                    <span className="text-[10px] font-mono text-[#918C83] shrink-0">{log.timestamp}</span>
+                    <span className="font-semibold text-[#201F1D] truncate tracking-[-0.005em]">{log.title}</span>
+                    <span className="text-[10px] font-mono text-[#7D786F] shrink-0">{log.timestamp}</span>
                   </div>
                   {log.detail && (
-                    <p className="text-[11px] text-[#68645D] leading-snug line-clamp-2">
+                    <p className="text-[11px] text-[#57524A] leading-snug line-clamp-2">
                       {log.detail}
                     </p>
                   )}

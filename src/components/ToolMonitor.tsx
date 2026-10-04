@@ -63,17 +63,17 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
       {/* Header */}
       <div className="glass-card flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span className="text-xs text-[#918C83] font-mono">SANDBOXED RUNTIME</span>
-          <h2 className="text-base sm:text-lg font-semibold text-[#292824] mt-0.5">
+          <span className="caption-meta">Sandboxed Runtime</span>
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#201F1D] tracking-[-0.016em] mt-0.5">
             Modular Tool Ecosystem & Live Invocation Stream
           </h2>
-          <p className="text-xs text-[#68645D] mt-0.5">
+          <p className="prose-secondary text-[#57524A] mt-1 max-w-[65ch]">
             Real-time auditable stream of agent tool calls, queries, latency measurements, and returned artifacts.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono text-[#68645D]">
-          <span className="glass-badge py-1 px-3">
+        <div className="flex items-center gap-2 text-xs font-mono text-[#57524A]">
+          <span className="glass-badge py-1 px-3 tabular-nums font-semibold text-[#201F1D]">
             Total Invocations: {toolInvocations.length}
           </span>
         </div>
@@ -97,17 +97,17 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
                   {getToolIcon(tool.iconName)}
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold text-[#292824]">{tool.name}</h3>
-                  <span className="text-[10px] font-mono text-[#918C83] uppercase">
+                  <h3 className="text-xs sm:text-[13px] font-semibold text-[#201F1D] tracking-tight">{tool.name}</h3>
+                  <span className="text-[11px] font-medium text-[#7D786F]">
                     {tool.category} · Risk: {tool.riskLevel}
                   </span>
                 </div>
               </div>
-              <span className="text-xs font-mono font-semibold text-[#7C72D8] bg-[#7C72D8]/10 px-2.5 py-0.5 rounded-full border border-[#7C72D8]/20">
+              <span className="text-xs font-mono font-semibold text-[#7C72D8] bg-[#7C72D8]/10 px-2.5 py-0.5 rounded-full border border-[#7C72D8]/20 tabular-nums">
                 {tool.callsCount} calls
               </span>
             </div>
-            <p className="mt-2.5 text-[11px] text-[#68645D] line-clamp-2 leading-relaxed">
+            <p className="mt-2.5 text-[11px] sm:text-xs text-[#57524A] line-clamp-2 leading-relaxed">
               {tool.description}
             </p>
           </div>
@@ -120,15 +120,15 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
         <div className="lg:col-span-7 glass-card space-y-4">
           <div className="flex items-center justify-between border-b border-white/60 pb-3">
             <div>
-              <span className="text-xs text-[#918C83] font-mono">LIVE EXECUTION FEED</span>
-              <h3 className="text-sm font-semibold text-[#292824] mt-0.5">
+              <span className="caption-meta">Live Execution Feed</span>
+              <h3 className="text-sm sm:text-base font-semibold text-[#201F1D] mt-0.5 tracking-[-0.01em]">
                 Transparent Tool Calls ({filteredInvocations.length})
               </h3>
             </div>
             {filterToolId !== 'all' && (
               <button
                 onClick={() => setFilterToolId('all')}
-                className="text-xs text-[#7C72D8] hover:underline cursor-pointer"
+                className="text-xs text-[#7C72D8] hover:underline cursor-pointer font-medium"
               >
                 Clear filter
               </button>
@@ -160,15 +160,15 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
                               : 'bg-[#D98282] shadow-[0_0_8px_rgba(217,130,130,0.45)]'
                           }`}
                         />
-                        <span className="font-semibold text-xs text-[#292824] truncate">
+                        <span className="font-semibold text-xs sm:text-[13px] text-[#201F1D] truncate">
                           {inv.toolName}
                         </span>
                         <span className="text-stone-300 text-xs">/</span>
-                        <span className="text-[11px] text-[#68645D] truncate">
+                        <span className="text-xs text-[#57524A] truncate">
                           {inv.taskTitle}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0 font-mono text-[11px] text-[#918C83]">
+                      <div className="flex items-center gap-2 shrink-0 font-mono text-[11px] text-[#7D786F] tabular-nums">
                         <span>{inv.durationMs}ms</span>
                         <span>·</span>
                         <span>{inv.timestamp}</span>
@@ -180,11 +180,11 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
                         {inv.error}
                       </p>
                     ) : inv.input.query ? (
-                      <div className="mt-2 text-xs text-[#292824] bg-white/70 p-2.5 rounded-xl font-mono truncate border border-[#EBE4D8]">
+                      <div className="mt-2 text-xs text-[#201F1D] bg-white/70 p-2.5 rounded-xl font-mono truncate border border-[#EBE4D8]">
                         Query: "{inv.input.query}"
                       </div>
                     ) : (
-                      <div className="mt-1.5 text-xs text-[#918C83] truncate">
+                      <div className="mt-1.5 text-xs text-[#7D786F] truncate">
                         Executed with {Object.keys(inv.input).length} parameters
                       </div>
                     )}
@@ -193,7 +193,7 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
               })}
             </div>
           ) : (
-            <div className="p-8 text-center text-xs text-[#918C83] border border-dashed border-[#EBE4D8] rounded-2xl">
+            <div className="p-8 text-center text-xs text-[#7D786F] border border-dashed border-[#EBE4D8] rounded-2xl">
               No tool calls logged yet. Run an autonomous workflow to observe transparent executions.
             </div>
           )}
@@ -203,16 +203,16 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
         <div className="lg:col-span-5 glass-card space-y-4">
           <div className="flex items-center justify-between border-b border-white/60 pb-3">
             <div>
-              <span className="text-xs text-[#918C83] font-mono">TELEMETRY INSPECTOR</span>
-              <h3 className="text-sm font-semibold text-[#292824] mt-0.5">
+              <span className="caption-meta">Telemetry Inspector</span>
+              <h3 className="text-sm sm:text-base font-semibold text-[#201F1D] mt-0.5 tracking-[-0.01em]">
                 Tool Call Payloads
               </h3>
             </div>
             {selectedInvocation && (
               <span
-                className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-semibold uppercase ${
+                className={`text-[11px] font-semibold capitalize px-2.5 py-0.5 rounded-full ${
                   selectedInvocation.status === 'success'
-                    ? 'bg-[#79A98A]/15 text-[#4E765D] border border-[#79A98A]/30'
+                    ? 'bg-[#79A98A]/15 text-[#3B664C] border border-[#79A98A]/30'
                     : 'bg-[#D98282]/15 text-[#8C3B3B] border border-[#D98282]/30'
                 }`}
               >
@@ -224,32 +224,32 @@ export const ToolMonitor: React.FC<ToolMonitorProps> = ({ toolInvocations }) => 
           {selectedInvocation ? (
             <div className="space-y-3 text-xs">
               <div>
-                <span className="text-[11px] text-[#918C83] font-mono">TOOL & TASK</span>
-                <p className="font-semibold text-[#292824] mt-0.5">{selectedInvocation.toolName}</p>
-                <p className="text-[#68645D] text-[11px]">{selectedInvocation.taskTitle}</p>
+                <span className="text-[11px] text-[#7D786F] font-medium">Tool & Task</span>
+                <p className="font-semibold text-[#201F1D] text-xs sm:text-[13px] mt-0.5">{selectedInvocation.toolName}</p>
+                <p className="text-[#57524A] text-xs mt-0.5">{selectedInvocation.taskTitle}</p>
               </div>
 
               <div>
-                <span className="text-[11px] text-[#918C83] font-mono">INPUT ARGUMENTS</span>
-                <pre className="mt-1 p-3 rounded-2xl bg-[#292824] text-[#FAF7F2] font-mono text-[11px] overflow-x-auto max-h-36 shadow-inner">
+                <span className="text-[11px] text-[#7D786F] font-medium">Input Arguments</span>
+                <pre className="mt-1 p-3 rounded-2xl bg-[#201F1D] text-[#FAF7F2] font-mono text-[11px] overflow-x-auto max-h-36 shadow-inner leading-relaxed">
                   {JSON.stringify(selectedInvocation.input, null, 2)}
                 </pre>
               </div>
 
               <div>
-                <span className="text-[11px] text-[#918C83] font-mono">OUTPUT PAYLOAD</span>
-                <pre className="mt-1 p-3 rounded-2xl bg-[#292824] text-[#FAF7F2] font-mono text-[11px] overflow-x-auto max-h-48 shadow-inner">
+                <span className="text-[11px] text-[#7D786F] font-medium">Output Payload</span>
+                <pre className="mt-1 p-3 rounded-2xl bg-[#201F1D] text-[#FAF7F2] font-mono text-[11px] overflow-x-auto max-h-48 shadow-inner leading-relaxed">
                   {JSON.stringify(selectedInvocation.output, null, 2)}
                 </pre>
               </div>
 
-              <div className="pt-2 border-t border-white/60 flex items-center justify-between text-[11px] font-mono text-[#918C83]">
+              <div className="pt-2 border-t border-white/60 flex items-center justify-between text-[11px] font-mono text-[#7D786F] tabular-nums">
                 <span>Latency: {selectedInvocation.durationMs}ms</span>
                 <span>Time: {selectedInvocation.timestamp}</span>
               </div>
             </div>
           ) : (
-            <div className="py-12 text-center text-xs text-[#918C83]">
+            <div className="py-12 text-center text-xs text-[#7D786F]">
               Select a tool call from the timeline to inspect raw inputs and outputs.
             </div>
           )}

@@ -65,11 +65,11 @@ export const AuditLog: React.FC<AuditLogProps> = ({ activityLog }) => {
       {/* Header */}
       <div className="glass-card flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span className="text-xs text-[#918C83] font-mono">CRYPTOGRAPHIC & AUDIT INTEGRITY</span>
-          <h2 className="text-base sm:text-lg font-semibold text-[#292824] mt-0.5">
+          <span className="caption-meta">Cryptographic & Audit Integrity</span>
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#201F1D] tracking-[-0.016em] mt-0.5">
             Immutable Activity & Decision Log
           </h2>
-          <p className="text-xs text-[#68645D] mt-0.5">
+          <p className="prose-secondary text-[#57524A] mt-1 max-w-[65ch]">
             Chronological audit trail preserving every agent transition, tool invocation, human approval, and recovery event.
           </p>
         </div>
@@ -77,16 +77,16 @@ export const AuditLog: React.FC<AuditLogProps> = ({ activityLog }) => {
         <div className="flex items-center gap-2">
           <button
             onClick={exportAsJSON}
-            className="liquid-button text-xs py-2 px-3.5"
+            className="liquid-button text-xs py-2 px-3.5 font-medium cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-[#68645D]" />
+            <Download className="w-3.5 h-3.5 text-[#57524A]" />
             <span>Export JSON</span>
           </button>
           <button
             onClick={exportAsCSV}
-            className="liquid-button text-xs py-2 px-3.5"
+            className="liquid-button text-xs py-2 px-3.5 font-medium cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-[#68645D]" />
+            <Download className="w-3.5 h-3.5 text-[#57524A]" />
             <span>Export CSV</span>
           </button>
         </div>
@@ -95,7 +95,7 @@ export const AuditLog: React.FC<AuditLogProps> = ({ activityLog }) => {
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 glass p-4!">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#918C83] absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-[#7D786F] absolute left-3.5 top-3" />
           <input
             type="text"
             placeholder="Search audit trail..."
@@ -110,13 +110,13 @@ export const AuditLog: React.FC<AuditLogProps> = ({ activityLog }) => {
             <button
               key={t}
               onClick={() => setFilterType(t)}
-              className={`px-3 py-1.5 rounded-xl transition-all capitalize cursor-pointer whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-xl transition-all capitalize cursor-pointer whitespace-nowrap text-xs ${
                 filterType === t
-                  ? 'bg-white text-[#292824] shadow-2xs font-semibold border border-white/90'
-                  : 'text-[#68645D] hover:text-[#292824]'
+                  ? 'bg-white text-[#201F1D] shadow-2xs font-semibold border border-white/90'
+                  : 'text-[#57524A] hover:text-[#201F1D]'
               }`}
             >
-              {t}
+              {t === 'approval' ? 'Review' : t}
             </button>
           ))}
         </div>
@@ -127,46 +127,46 @@ export const AuditLog: React.FC<AuditLogProps> = ({ activityLog }) => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/80 bg-white/40 text-[#68645D] font-mono text-[11px]">
-                <th className="py-3 px-5 font-medium">TIMESTAMP</th>
-                <th className="py-3 px-5 font-medium">TYPE</th>
-                <th className="py-3 px-5 font-medium">AGENT</th>
-                <th className="py-3 px-5 font-medium">EVENT TITLE</th>
-                <th className="py-3 px-5 font-medium">AUDIT DETAILS</th>
+              <tr className="border-b border-white/80 bg-white/40 text-[#57524A] text-xs font-semibold">
+                <th className="py-3 px-5 font-semibold text-[#201F1D]">Timestamp</th>
+                <th className="py-3 px-5 font-semibold text-[#201F1D]">Type</th>
+                <th className="py-3 px-5 font-semibold text-[#201F1D]">Agent</th>
+                <th className="py-3 px-5 font-semibold text-[#201F1D]">Event Title</th>
+                <th className="py-3 px-5 font-semibold text-[#201F1D]">Audit Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/60">
               {filteredLogs.map((item) => (
                 <tr key={item.id} className="hover:bg-white/40 transition-colors">
-                  <td className="py-3.5 px-5 font-mono text-[11px] text-[#918C83] whitespace-nowrap">
+                  <td className="py-3.5 px-5 font-mono text-[11px] text-[#7D786F] whitespace-nowrap tabular-nums">
                     {item.timestamp}
                   </td>
                   <td className="py-3.5 px-5 whitespace-nowrap">
                     <span
-                      className={`font-mono text-[10px] px-2.5 py-0.5 rounded-full font-semibold uppercase ${
+                      className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold capitalize ${
                         item.type === 'error'
                           ? 'bg-[#D98282]/15 text-[#8C3B3B] border border-[#D98282]/30'
                           : item.type === 'approval' || item.type === 'warning'
                           ? 'bg-[#D5A45C]/15 text-[#8C6D2D] border border-[#D5A45C]/30'
                           : item.type === 'recovery'
-                          ? 'bg-[#7F9DBB]/15 text-[#3B5773] border border-[#7F9DBB]/30'
+                          ? 'bg-[#7F9DBB]/15 text-[#324C65] border border-[#7F9DBB]/30'
                           : item.type === 'success'
-                          ? 'bg-[#79A98A]/15 text-[#4E765D] border border-[#79A98A]/30'
+                          ? 'bg-[#79A98A]/15 text-[#3B664C] border border-[#79A98A]/30'
                           : item.type === 'tool'
                           ? 'bg-[#7C72D8]/10 text-[#7C72D8] border border-[#7C72D8]/20'
-                          : 'bg-white/80 text-[#292824] border border-[#EBE4D8]'
+                          : 'bg-white/80 text-[#201F1D] border border-[#EBE4D8]'
                       }`}
                     >
                       {item.type}
                     </span>
                   </td>
-                  <td className="py-3.5 px-5 font-semibold text-[#292824] whitespace-nowrap capitalize">
+                  <td className="py-3.5 px-5 font-semibold text-[#201F1D] whitespace-nowrap capitalize text-xs">
                     {item.agentRole ? `${item.agentRole} Agent` : 'System'}
                   </td>
-                  <td className="py-3.5 px-5 font-semibold text-[#292824] whitespace-nowrap">
+                  <td className="py-3.5 px-5 font-semibold text-[#201F1D] whitespace-nowrap text-xs sm:text-[13px]">
                     {item.title}
                   </td>
-                  <td className="py-3.5 px-5 text-[#68645D] max-w-md leading-relaxed">
+                  <td className="py-3.5 px-5 text-[#57524A] max-w-md leading-relaxed text-xs">
                     {item.detail || '—'}
                   </td>
                 </tr>

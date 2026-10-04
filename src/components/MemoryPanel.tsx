@@ -46,11 +46,11 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
       {/* Header */}
       <div className="glass-card flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span className="text-xs text-[#918C83] font-mono">PERSISTENT COGNITIVE STATE</span>
-          <h2 className="text-base sm:text-lg font-semibold text-[#292824] mt-0.5">
+          <span className="caption-meta">Persistent Cognitive State</span>
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#201F1D] tracking-[-0.016em] mt-0.5">
             Structured Agent Memory Architecture
           </h2>
-          <p className="text-xs text-[#68645D] mt-0.5">
+          <p className="prose-secondary text-[#57524A] mt-1 max-w-[65ch]">
             Contextual memory partitions enabling deterministic recall, policy enforcement, and cross-task persistence.
           </p>
         </div>
@@ -58,14 +58,14 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsAdding(true)}
-            className="liquid-button primary text-xs py-2 px-3.5"
+            className="liquid-button primary text-xs py-2 px-3.5 font-semibold cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Memory Directive</span>
           </button>
           <button
             onClick={onClearMemories}
-            className="liquid-button text-xs py-2 px-3 text-[#8C3B3B] border-[#D98282]/30 hover:bg-[#D98282]/10"
+            className="liquid-button text-xs py-2 px-3 text-[#8C3B3B] border-[#D98282]/30 hover:bg-[#D98282]/10 font-medium cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Clear Memory</span>
@@ -80,15 +80,15 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
           className="glass p-5! border-[#D5A45C]/40 bg-[#FAF4EA]/80 shadow-sm space-y-3"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#292824]">
-              Inject Human Operator Directive / Context
+            <span className="text-xs sm:text-[13px] font-semibold text-[#201F1D]">
+              Inject Human Directive / Context Rule
             </span>
             <div className="flex items-center gap-2">
               <select
                 aria-label="Memory Type"
                 value={newType}
                 onChange={(e) => setNewType(e.target.value as any)}
-                className="text-xs py-1.5 px-3 bg-white/80 border border-[#EBE4D8] rounded-xl font-medium text-[#292824] shadow-2xs"
+                className="text-xs py-1.5 px-3 bg-white/80 border border-[#EBE4D8] rounded-xl font-medium text-[#201F1D] shadow-2xs cursor-pointer"
               >
                 <option value="long_term">Long-Term (Persistent Rule)</option>
                 <option value="working">Working Memory (Current Workflow)</option>
@@ -102,20 +102,20 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
             onChange={(e) => setNewContent(e.target.value)}
             rows={2}
             placeholder="E.g., Institutional Rule: All generated content must comply with educational privacy and clarity guidelines."
-            className="glass-input text-xs"
+            className="glass-input text-xs sm:text-[13px] leading-relaxed"
           />
 
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="liquid-button primary text-xs py-1.5 px-4"
+              className="liquid-button primary text-xs py-1.5 px-4 font-semibold cursor-pointer"
             >
               Save Memory
             </button>
             <button
               type="button"
               onClick={() => setIsAdding(false)}
-              className="liquid-button text-xs py-1.5 px-3"
+              className="liquid-button text-xs py-1.5 px-3 font-medium cursor-pointer"
             >
               Cancel
             </button>
@@ -135,13 +135,13 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-medium text-[#918C83]">PARTITION 01</span>
-            <span className="text-xs font-mono font-bold text-[#292824]">
+            <span className="caption-meta">Partition 01</span>
+            <span className="text-xs font-mono font-semibold text-[#201F1D] tabular-nums">
               {memories.filter((m) => m.type === 'short_term').length} items
             </span>
           </div>
-          <h3 className="text-sm font-semibold text-[#292824] mt-1">Short-Term Memory</h3>
-          <p className="text-xs text-[#68645D] mt-1 leading-snug">
+          <h3 className="text-sm sm:text-[15px] font-semibold text-[#201F1D] mt-1 tracking-tight">Short-Term Memory</h3>
+          <p className="text-xs text-[#57524A] mt-1 leading-snug">
             Immediate task state, local variables, and current step inputs.
           </p>
         </div>
@@ -156,13 +156,13 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-medium text-[#918C83]">PARTITION 02</span>
-            <span className="text-xs font-mono font-bold text-[#292824]">
+            <span className="caption-meta">Partition 02</span>
+            <span className="text-xs font-mono font-semibold text-[#201F1D] tabular-nums">
               {memories.filter((m) => m.type === 'working').length} items
             </span>
           </div>
-          <h3 className="text-sm font-semibold text-[#292824] mt-1">Working Memory</h3>
-          <p className="text-xs text-[#68645D] mt-1 leading-snug">
+          <h3 className="text-sm sm:text-[15px] font-semibold text-[#201F1D] mt-1 tracking-tight">Working Memory</h3>
+          <p className="text-xs text-[#57524A] mt-1 leading-snug">
             Active findings, candidate vendor pools, and accumulated cross-task insights.
           </p>
         </div>
@@ -177,13 +177,13 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-medium text-[#918C83]">PARTITION 03</span>
-            <span className="text-xs font-mono font-bold text-[#292824]">
+            <span className="caption-meta">Partition 03</span>
+            <span className="text-xs font-mono font-semibold text-[#201F1D] tabular-nums">
               {memories.filter((m) => m.type === 'long_term').length} items
             </span>
           </div>
-          <h3 className="text-sm font-semibold text-[#292824] mt-1">Long-Term Memory</h3>
-          <p className="text-xs text-[#68645D] mt-1 leading-snug">
+          <h3 className="text-sm sm:text-[15px] font-semibold text-[#201F1D] mt-1 tracking-tight">Long-Term Memory</h3>
+          <p className="text-xs text-[#57524A] mt-1 leading-snug">
             Governance rules, institutional standards, and verified cross-session facts.
           </p>
         </div>
@@ -193,15 +193,15 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
       <div className="glass-card space-y-4">
         <div className="flex items-center justify-between border-b border-white/60 pb-3">
           <div>
-            <span className="text-xs text-[#918C83] font-mono">MEMORY REGISTRY</span>
-            <h3 className="text-sm font-semibold text-[#292824] mt-0.5">
+            <span className="caption-meta">Memory Registry</span>
+            <h3 className="text-sm sm:text-base font-semibold text-[#201F1D] mt-0.5 tracking-[-0.01em]">
               Active Knowledge Buffers ({filteredMemories.length})
             </h3>
           </div>
           {activeTab !== 'all' && (
             <button
               onClick={() => setActiveTab('all')}
-              className="text-xs text-[#7C72D8] hover:underline cursor-pointer"
+              className="text-xs text-[#7C72D8] hover:underline cursor-pointer font-medium"
             >
               Show all partitions
             </button>
@@ -220,17 +220,17 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
                     <span className="font-mono text-[10px] uppercase font-semibold text-[#7C72D8] bg-[#7C72D8]/10 px-2 py-0.5 rounded-full border border-[#7C72D8]/20">
                       {mem.type.replace('_', ' ')}
                     </span>
-                    <span className="text-[#918C83]">·</span>
-                    <span className="text-[#68645D] font-medium">Source: {mem.source}</span>
-                    <span className="text-[#918C83]">·</span>
-                    <span className="font-mono text-[#918C83]">{mem.timestamp}</span>
+                    <span className="text-[#7D786F]">·</span>
+                    <span className="text-[#57524A] font-medium">Source: {mem.source}</span>
+                    <span className="text-[#7D786F]">·</span>
+                    <span className="font-mono text-[#7D786F] tabular-nums">{mem.timestamp}</span>
                   </div>
 
-                  <p className="text-[#292824] text-xs sm:text-sm font-medium leading-relaxed">
+                  <p className="text-[#201F1D] text-xs sm:text-[14px] font-medium leading-relaxed max-w-[65ch]">
                     {mem.content}
                   </p>
 
-                  <div className="flex items-center gap-3 pt-1 text-[11px] font-mono text-[#68645D]">
+                  <div className="flex items-center gap-3 pt-1 text-[11px] font-mono text-[#57524A] tabular-nums">
                     <span>Confidence: {mem.confidence}%</span>
                     <span>·</span>
                     <span>Relevance: {mem.relevance}%</span>
@@ -239,7 +239,7 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
 
                 <button
                   onClick={() => onDeleteMemory(mem.id)}
-                  className="text-[#918C83] hover:text-[#8C3B3B] transition-colors p-1.5 rounded-lg hover:bg-white/80 cursor-pointer"
+                  className="text-[#7D786F] hover:text-[#8C3B3B] transition-colors p-1.5 rounded-lg hover:bg-white/80 cursor-pointer"
                   title="Purge this memory item"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -248,7 +248,7 @@ export const MemoryPanel: React.FC<MemoryPanelProps> = ({
             ))}
           </div>
         ) : (
-          <div className="py-12 text-center text-xs text-[#918C83] border border-dashed border-[#EBE4D8] rounded-2xl">
+          <div className="py-12 text-center text-xs text-[#7D786F] border border-dashed border-[#EBE4D8] rounded-2xl">
             No memories stored in this partition. Add a directive or run an agent workflow.
           </div>
         )}
