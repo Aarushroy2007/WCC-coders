@@ -520,6 +520,23 @@ class OrchestratorService {
     this.notify();
   }
 
+  public requestChangesOnPendingAction(guidance: string): void {
+    if (!this.state.pendingApproval) return;
+    const { taskId } = this.state.pendingApproval;
+    const task = this.state.tasks.find((t) => t.id === taskId);
+    if (task) {
+      this.addLog(
+        'approval',
+        'Human Reviewer Requested Revisions',
+        `Guidance submitted: "${guidance}". Adjusting plan before final approval.`,
+        'supervisor',
+        task.id
+      );
+      this.addMemory(`Operator Directive for Task #${task.order}: ${guidance}`, 'working');
+    }
+    this.approvePendingAction();
+  }
+
   /**
    * Emergency Stop: Immediately halts active operations
    */

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { AgentPhase } from '../types/agent';
-import { Square, Play, Sparkles, ShieldCheck, HelpCircle } from 'lucide-react';
+import { Square, Play, Sparkles, ShieldCheck, HelpCircle, ShieldAlert } from 'lucide-react';
 
 interface TopBarProps {
   activeTab: string;
@@ -85,6 +85,18 @@ export const TopBar: React.FC<TopBarProps> = ({
 
         {/* Zone 3: Primary Actions & Emergency Controls */}
         <div className="flex items-center gap-2.5 shrink-0">
+          {/* Review Needed button if pending approval */}
+          {pendingApprovalsCount > 0 && (
+            <button
+              onClick={() => setActiveTab('command')}
+              className="liquid-button text-xs py-1.5 px-3 bg-[#FEF8EC] text-[#8C6D2D] border border-[#D5A45C]/50 hover:bg-[#FDF2D9] flex items-center gap-1.5 font-semibold animate-pulse shadow-2xs cursor-pointer"
+              title="A high-priority governance approval requires your review"
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-[#D5A45C]" />
+              <span>Review Needed</span>
+            </button>
+          )}
+
           {/* Why Different button */}
           <button
             onClick={onOpenWhyDifferent}

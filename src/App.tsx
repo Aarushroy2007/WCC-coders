@@ -74,9 +74,9 @@ export default function App() {
               </button>
               <button
                 onClick={() => setActiveTab('command')}
-                className="liquid-button text-xs py-1.5 px-3"
+                className="liquid-button text-xs py-1.5 px-3 border-[#D5A45C]/40 bg-white"
               >
-                Inspect
+                Review Details
               </button>
             </div>
           </div>
@@ -110,6 +110,7 @@ export default function App() {
             onEmergencyStop={() => orchestrator.emergencyStop()}
             onApprove={() => orchestrator.approvePendingAction()}
             onReject={() => orchestrator.rejectPendingAction()}
+            onRequestChanges={(feedback) => orchestrator.requestChangesOnPendingAction(feedback)}
             onRestartTask={(id) => orchestrator.restartFailedTask(id)}
             onNavigateToTasks={() => setActiveTab('tasks')}
             onNavigateToDeliverable={() => setActiveTab('deliverable')}

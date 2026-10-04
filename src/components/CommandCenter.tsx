@@ -25,8 +25,10 @@ import {
   Cpu,
   RefreshCw,
   Search,
+  FileCheck,
 } from 'lucide-react';
 import { WorkflowDisplay } from './WorkflowDisplay';
+import { ReviewModal } from './ReviewModal';
 
 interface CommandCenterProps {
   objective: string;
@@ -57,6 +59,7 @@ interface CommandCenterProps {
   onStepWorkflow: () => void;
   onApprove: () => void;
   onReject: () => void;
+  onRequestChanges?: (feedback: string) => void;
   onEmergencyStop?: () => void;
   onRestartTask: (taskId: string) => void;
   onNavigateToTasks: () => void;
@@ -84,6 +87,7 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
   onStepWorkflow,
   onApprove,
   onReject,
+  onRequestChanges,
   onEmergencyStop = () => {},
   onRestartTask,
   onNavigateToTasks,
@@ -92,6 +96,7 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [customGoalInput, setCustomGoalInput] = useState(objective);
   const [showConfidenceDetail, setShowConfidenceDetail] = useState(false);
+  const [isCommandReviewOpen, setIsCommandReviewOpen] = useState(false);
 
   const completedTasksCount = tasks.filter((t) => t.status === 'completed' || t.status === 'recovered').length;
   const totalTasksCount = tasks.length;
@@ -378,6 +383,7 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
         onEmergencyStop={onEmergencyStop}
         onApprove={onApprove}
         onReject={onReject}
+        onRequestChanges={onRequestChanges}
         onSelectTask={(id) => onNavigateToTasks()}
         onNavigateToDeliverable={onNavigateToDeliverable}
       />
@@ -414,6 +420,13 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
 
             {/* Action buttons */}
             <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
+              <button
+                onClick={() => setIsCommandReviewOpen(true)}
+                className="w-full sm:w-auto liquid-button text-xs py-2 px-3.5 flex items-center gap-1.5 border-[#D5A45C]/50 bg-white"
+              >
+                <FileCheck className="w-3.5 h-3.5 text-[#D5A45C]" />
+                <span>Review Details</span>
+              </button>
               <button
                 onClick={onApprove}
                 className="w-full sm:w-auto liquid-button primary text-xs py-2 px-4 shadow-sm"
@@ -616,6 +629,19 @@ export const CommandCenter: React.FC<CommandCenterProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Interactive Review Modal */}
+      <ReviewModal
+        isOpen={isCommandReviewOpen}
+        onClose={() => setIsCommandReviewOpen(false)}
+        pendingApproval={pendingApproval}
+        tasks={tasks}
+        objective={objective}
+        onApprove={onApprove}
+        onReject={onReject}
+        onRequestChanges={onRequestChanges}
+        onNavigateToDeliverable={onNavigateToDeliverable}
+      />
     </div>
   );
 };
