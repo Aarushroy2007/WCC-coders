@@ -1,0 +1,6 @@
+{
+  "name": "Aegis · Autonomous AI Agent System",
+  "description": "An intelligent autonomous agentic orchestration platform featuring multi-agent planning, modular tools, dynamic self-correction, verification engines, and transparent human-in-the-loop approval gates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
